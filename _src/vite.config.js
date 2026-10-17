@@ -13,6 +13,7 @@ export default defineConfig({
         cafe: resolve(__dirname, 'work/cafe/index.html'),
         clinic: resolve(__dirname, 'work/clinic/index.html'),
         interior: resolve(__dirname, 'work/interior/index.html'),
+        academy: resolve(__dirname, 'work/academy/index.html'),
       },
     },
   },
