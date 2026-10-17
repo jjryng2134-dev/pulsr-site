@@ -13,7 +13,7 @@ const WORKS = [
   { id: 'clinic', name: '맑은결 피부과', biz: '피부과·치과', feat: '남은 자리 보이는 예약 달력 → 알림톡 미리보기', tech: ['React', 'GSAP'], href: '/work/clinic/', ready: true, thumb: '/work/clinic/img/clinic_hero.jpg' },
   { id: 'interior', name: '오롯 인테리어', biz: '시공·리모델링', feat: '3D 방 재질 바꾸기, 전후 비교, 평수 견적', tech: ['Three.js', 'React', 'GSAP'], href: '/work/interior/', ready: true, thumb: '/work/interior/img/int_hero.jpg' },
   { id: 'academy', name: '한걸음 수학', biz: '학원·교습소', feat: '3분 레벨 진단, 약한 단원 분석, 남은 자리 시간표', tech: ['React', 'GSAP'], href: '/work/academy/', ready: true, thumb: '/work/academy/img/aca_hero.jpg' },
-  { id: 'detail', name: '상품 상세', biz: '쇼핑 상세페이지', feat: '스크롤 연출, 옵션·가격 계산', tech: ['GSAP', 'React'] },
+  { id: 'detail', name: '아침결 그래놀라', biz: '쇼핑 상세페이지', feat: '스크롤로 펼쳐지는 사진, 옵션·수량·배송비 계산, 장바구니', tech: ['GSAP', 'React'], href: '/work/detail/', ready: true, thumb: '/work/detail/img/gr1_hero.jpg' },
   { id: 'class', name: '원데이 클래스', biz: '공방·클래스', feat: '남은 자리 있는 날짜로 예약', tech: ['React'] },
 ]
 
