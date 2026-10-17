@@ -27,7 +27,7 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spa
 .logo b { color: var(--lime) }
 .nav nav { display: flex; gap: 26px; margin-left: auto; font-size: 14px; opacity: .85 }
 .nav nav a:hover { color: var(--lime) }
-.nav-cta { padding: 10px 18px; border-radius: 999px; background: var(--lime); color: var(--ink); font-weight: 700; font-size: 14px }
+.nav-cta { padding: 10px 18px; border-radius: 999px; background: var(--lime); color: var(--on-acc); font-weight: 700; font-size: 14px }
 
 /* 첫 화면 */
 .hero { position: relative; min-height: 100svh; background: radial-gradient(120% 80% at 85% 10%, var(--hi) 0%, var(--deep) 38%, var(--deep2) 100%); color: var(--paper); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: clamp(24px, 4vw, 64px); align-items: center; padding: 120px max(24px, calc((100% - 1240px) / 2)) 72px; overflow: hidden }
@@ -42,7 +42,7 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spa
 .cta { display: flex; flex-wrap: wrap; gap: 12px }
 .btn { display: inline-flex; align-items: center; gap: 10px; min-height: 56px; padding: 0 26px; border-radius: 999px; font-weight: 700; font-size: 16px; transition: transform .2s, background .2s }
 .btn:hover { transform: translateY(-2px) }
-.btn.lime { background: var(--lime); color: var(--ink) }
+.btn.lime { background: var(--lime); color: var(--on-acc) }
 .btn.line { border: 1px solid rgba(var(--on-rgb), .35) }
 .btn.line:hover { background: rgba(var(--on-rgb), .08) }
 .offer { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 0 36px; margin-top: 44px; padding-top: 24px; border-top: 1px solid rgba(var(--on-rgb), .14) }
@@ -92,7 +92,7 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spa
 .w-card.ready:hover .w-thumb img { transform: scale(1.05) }
 .w-num { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--serif); font-style: italic; font-size: 88px; color: rgba(var(--ink-rgb), .12) }
 .w-state { position: absolute; left: 14px; top: 14px; padding: 6px 12px; border-radius: 999px; background: rgba(255, 255, 255, .9); font-size: 12px; font-weight: 700; color: var(--mute) }
-.w-state.on { background: var(--lime); color: var(--ink) }
+.w-state.on { background: var(--lime); color: var(--on-acc) }
 .w-body { padding: 20px 22px 24px }
 .w-biz { font-size: 13px; color: var(--mute) }
 .w-body h3 { font-size: 22px; margin: 2px 0 8px }
@@ -137,7 +137,7 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spa
   .proof-in div:first-child { border-top: 0 }
   .w-grid { grid-template-columns: 1fr }
   .foot-in { grid-template-columns: 1fr }
-  .m-cta { display: flex; position: fixed; z-index: 40; left: 16px; right: 16px; bottom: calc(14px + env(safe-area-inset-bottom)); min-height: 54px; border-radius: 999px; background: var(--lime); color: var(--ink); font-weight: 900; justify-content: center; align-items: center; box-shadow: 0 14px 34px -10px rgba(0, 0, 0, .45) }
+  .m-cta { display: flex; position: fixed; z-index: 40; left: 16px; right: 16px; bottom: calc(14px + env(safe-area-inset-bottom)); min-height: 54px; border-radius: 999px; background: var(--lime); color: var(--on-acc); font-weight: 900; justify-content: center; align-items: center; box-shadow: 0 14px 34px -10px rgba(0, 0, 0, .45) }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important }
@@ -159,7 +159,7 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spa
 .stage-steps b { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font-size: 10px; background: rgba(var(--on-rgb), .12) }
 .stage-steps li.past { color: rgba(var(--on-rgb), .8) }
 .stage-steps li.past b { background: rgba(var(--acc-rgb), .35); color: var(--ink) }
-.stage-steps li.on { background: var(--lime); color: var(--ink); border-color: var(--lime); transform: translateY(-2px); box-shadow: 0 8px 22px -8px rgba(var(--acc-rgb), .6) }
+.stage-steps li.on { background: var(--lime); color: var(--on-acc); border-color: var(--lime); transform: translateY(-2px); box-shadow: 0 8px 22px -8px rgba(var(--acc-rgb), .6) }
 .stage-steps li.on b { background: var(--ink); color: var(--lime) }
 @media (max-width: 640px) { .glow { width: 360px; height: 360px; right: -20%; top: 50% } .stage-steps li { font-size: 11px } }
 @media (max-width: 640px) {
@@ -188,7 +188,7 @@ button.w-thumb:disabled { cursor: default }
 .pv-bar > div:first-child span { font-size: 12px; opacity: .6 }
 .pv-seg { display: inline-flex; padding: 4px; border-radius: 999px; background: rgba(var(--on-rgb), .08) }
 .pv-seg button { padding: 7px 16px; border-radius: 999px; border: 0; background: none; color: inherit; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer }
-.pv-seg button.on { background: var(--lime); color: var(--ink) }
+.pv-seg button.on { background: var(--lime); color: var(--on-acc) }
 .pv-open { font-size: 13px; font-weight: 700; color: var(--lime) }
 .pv-x { width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgba(var(--on-rgb), .1); color: var(--paper); cursor: pointer; font-size: 14px }
 .pv-stage { flex: 1; min-height: 0; display: grid; place-items: center; padding: 0 14px 14px; background: radial-gradient(60% 60% at 50% 40%, var(--hi), var(--frame2)) }
@@ -214,7 +214,7 @@ button.w-thumb:disabled { cursor: default }
 .lv-d { font-size: 15px; color: rgba(var(--on-rgb), .72); flex: 1 }
 .lv-works { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px }
 .lv-works button { padding: 7px 12px; border-radius: 999px; border: 1px solid rgba(var(--on-rgb), .2); background: none; color: var(--paper); font: inherit; font-size: 12px; cursor: pointer; transition: background .2s, color .2s }
-.lv-works button:hover { background: var(--lime); color: var(--ink) }
+.lv-works button:hover { background: var(--lime); color: var(--on-acc) }
 
 /* ── 견적 계산기 ── */
 .est { padding: clamp(80px, 11vw, 140px) 0 }
@@ -288,9 +288,9 @@ button.w-thumb:disabled { cursor: default }
 .c-steps button:disabled { cursor: default }
 .c-steps b { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: rgba(var(--ink-rgb), .08); font-size: 12px }
 .c-steps li.past button { border-color: var(--deep); color: var(--ink) }
-.c-steps li.past b { background: var(--deep); color: var(--lime) }
+.c-steps li.past b { background: var(--deep); color: #fff }
 .c-steps li.on button { border-color: var(--ink); color: var(--ink) }
-.c-steps li.on b { background: var(--lime); color: var(--ink) }
+.c-steps li.on b { background: var(--lime); color: var(--on-acc) }
 .c-body { min-height: 230px; animation: cIn .4s cubic-bezier(.2, .9, .2, 1) }
 @keyframes cIn { from { opacity: 0; transform: translateX(24px) } }
 .c-body h3 { font-size: 24px; margin-bottom: 16px }
@@ -359,24 +359,27 @@ button.w-thumb:disabled { cursor: default }
   .cmp td.us::before { color: var(--lime) }
 }
 
-/* ── 색 조합 후보 (?theme=a|b|c 로 미리보기) ── */
-[data-theme='a'] { /* 블랙 · 샴페인 골드 */
-  --paper: #f6f3ee; --paper2: #fbf9f5; --paper3: #ebe6dd; --paper4: #ddd5c6; --tint: #fbf7ee;
-  --ink: #0e0d0c; --ink-rgb: 14, 13, 12; --mute: #6b655c; --line: rgba(14, 13, 12, .12);
-  --lime: #c9a96e; --acc-rgb: 201, 169, 110;
-  --deep: #8a6d3b; --deep2: #0e0d0c; --deep2-rgb: 14, 13, 12; --hi: #1d1b18; --frame: #201e1b; --frame2: #0a0909; --on-rgb: 246, 243, 238;
+/* ── 색 조합 후보 (?theme=a|b|c) — 근거: 라인_홈페이지/12_색조합_후보_20261017/레퍼런스_색조사.md ── */
+[data-theme='a'] { /* 모노: 블랙 + 오프화이트 (Locomotive·Plus X·14islands·BRIGHT) */
+  --paper: #f7f7f2; --paper2: #fbfbf8; --paper3: #e9e9e3; --paper4: #dcdcd5; --tint: #f2f2ec;
+  --ink: #0f0f0f; --ink-rgb: 15, 15, 15; --mute: #5c5c58; --line: rgba(15, 15, 15, .12);
+  --lime: #f7f7f2; --acc-rgb: 247, 247, 242; --on-acc: #0f0f0f;
+  --deep: #0f0f0f; --deep2: #0f0f0f; --deep2-rgb: 15, 15, 15; --hi: #222220; --frame: #1e1e1e; --frame2: #0a0a0a; --on-rgb: 247, 247, 242;
 }
-[data-theme='b'] { /* 미드나잇 네이비 · 코퍼 */
-  --paper: #f4f1ec; --paper2: #faf8f4; --paper3: #e6e1d8; --paper4: #d9d2c4; --tint: #fbf6f0;
-  --ink: #0b1220; --ink-rgb: 11, 18, 32; --mute: #5b6475; --line: rgba(11, 18, 32, .12);
-  --lime: #d9925e; --acc-rgb: 217, 146, 94;
-  --deep: #a8643a; --deep2: #0b1220; --deep2-rgb: 11, 18, 32; --hi: #1c2a48; --frame: #18213a; --frame2: #070c17; --on-rgb: 244, 241, 236;
+[data-theme='b'] { /* 블랙 + 오프화이트 + 시그널 레드 (Hero Collective·Zajno·Ask Phill·bleibtgleich) */
+  --paper: #f7f7f2; --paper2: #fbfbf8; --paper3: #e9e9e3; --paper4: #dcdcd5; --tint: #fff4f2;
+  --ink: #0a0a0a; --ink-rgb: 10, 10, 10; --mute: #5c5c58; --line: rgba(10, 10, 10, .12);
+  --lime: #f51c20; --acc-rgb: 245, 28, 32; --on-acc: #ffffff;
+  --deep: #d4141a; --deep2: #0a0a0a; --deep2-rgb: 10, 10, 10; --hi: #1c1414; --frame: #1e1e1e; --frame2: #070707; --on-rgb: 247, 247, 242;
 }
-[data-theme='c'] { /* 오프화이트 · 먹 · 시그널 레드 */
-  --paper: #f3f2ef; --paper2: #fafaf8; --paper3: #e4e3df; --paper4: #d6d5d0; --tint: #fff6f3;
-  --ink: #111111; --ink-rgb: 17, 17, 17; --mute: #5f5f5f; --line: rgba(17, 17, 17, .12);
-  --lime: #ff4f2b; --acc-rgb: 255, 79, 43;
-  --deep: #d93a1a; --deep2: #111111; --deep2-rgb: 17, 17, 17; --hi: #2a2a2a; --frame: #222222; --frame2: #0b0b0b; --on-rgb: 243, 242, 239;
+[data-theme='c'] { /* 오프화이트 + 코발트 블루 (Lusion·Depo Studio) */
+  --paper: #f0f1fa; --paper2: #f7f8fd; --paper3: #e1e3f2; --paper4: #d3d6eb; --tint: #eef0ff;
+  --ink: #0b0d1f; --ink-rgb: 11, 13, 31; --mute: #565b78; --line: rgba(11, 13, 31, .12);
+  --lime: #1a2ffb; --acc-rgb: 26, 47, 251; --on-acc: #ffffff;
+  --deep: #1a2ffb; --deep2: #0b0d1f; --deep2-rgb: 11, 13, 31; --hi: #16206e; --frame: #1a1d36; --frame2: #070814; --on-rgb: 240, 241, 250;
 }
-[data-theme] .glow { opacity: .7 }
-[data-theme='a'] .hl-mark { background: rgba(var(--acc-rgb), .45) }
+[data-theme] .glow { opacity: .55 }
+[data-theme='a'] .glow { opacity: .25 }
+[data-theme='a'] .c-card .btn.lime, [data-theme='a'] .w-play { background: var(--ink); color: var(--paper) }
+[data-theme='b'] .glow, [data-theme='c'] .glow { opacity: .35 }
+[data-theme='c'] .sec-head.dark .kicker, [data-theme='c'] .sec-head.dark h2 em, [data-theme='c'] .lv-n, [data-theme='c'] .hero h1 em, [data-theme='c'] .e-n b, [data-theme='c'] .logo b, [data-theme='c'] .offer.tentative div:last-of-type dd, [data-theme='c'] .proof-in b, [data-theme='c'] .cmp thead .us { color: #7d8aff }
