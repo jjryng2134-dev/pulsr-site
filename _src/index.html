@@ -7,9 +7,13 @@
 <meta name="description" content="예약·주문·견적이 실제로 돌아가는 견본을 직접 눌러 보고 고르세요. PULSR 홈페이지 제작.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"></noscript>
 </head>
 <body>
+<!-- JS가 오기 전 첫 화면: 검은 바탕과 빨간 줄. 인트로가 시작되면 지운다 -->
+<style>html{background:#0a0a0a}#boot{position:fixed;inset:0;z-index:300;background:#0a0a0a}#boot i{position:absolute;left:0;bottom:0;height:4px;width:30%;background:#f51c20;animation:bt 1.2s ease-in-out infinite alternate}@keyframes bt{to{width:70%}}</style>
+<div id="boot" aria-hidden="true"><i></i></div>
 <div id="root"></div>
 <script type="module" src="/src/home/main.jsx"></script>
 </body>

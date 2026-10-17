@@ -186,9 +186,10 @@ function WorkList({ list, all, onOpen }) {
   const box = useRef(null)
   const flt = useRef(null)
   const [hov, setHov] = useState(null)
+  const [desk] = useState(() => window.matchMedia('(hover: hover) and (min-width: 981px)').matches)
   const ready = all.filter((w) => w.ready)
   useEffect(() => {
-    if (reduce || !window.matchMedia('(hover: hover) and (min-width: 981px)').matches) return
+    if (reduce || !desk) return
     const fx = gsap.quickTo(flt.current, 'x', { duration: 0.6, ease: 'power3.out' })
     const fy = gsap.quickTo(flt.current, 'y', { duration: 0.6, ease: 'power3.out' })
     const move = (e) => { const r = box.current.getBoundingClientRect(); fx(e.clientX - r.left); fy(e.clientY - r.top) }
@@ -217,7 +218,7 @@ function WorkList({ list, all, onOpen }) {
                 <h3 className="wl-name">{w.name}</h3>
                 <p className="wl-biz">{w.biz}{!w.ready && <b>제작 중</b>}</p>
               </div>
-              {w.ready && <div className="wl-m"><video muted loop playsInline preload="none" poster={w.thumb}><source src={`/home/w_${w.id}.mp4`} type="video/mp4" /><source src={`/home/w_${w.id}.webm`} type="video/webm" /></video></div>}
+              {w.ready && <div className="wl-m"><video muted loop playsInline preload="none" poster={`/home/w_${w.id}.jpg`}><source src={`/home/w_${w.id}.mp4`} type="video/mp4" /><source src={`/home/w_${w.id}.webm`} type="video/webm" /></video></div>}
               <p className="wl-feat">{w.feat}</p>
               <p className="wl-tech">{w.tech.join(' · ')}</p>
               {w.ready ? <a className="wl-go" href={w.href} target="_blank" rel="noreferrer" aria-label={`${w.name} 새 창으로 열기`}>↗</a> : <span className="wl-go" aria-hidden>·</span>}
@@ -225,14 +226,14 @@ function WorkList({ list, all, onOpen }) {
           )
         })}
       </ul>
-      <div className={`wl-float ${hov ? 'on' : ''}`} ref={flt} aria-hidden>
+      {desk && <div className={`wl-float ${hov ? 'on' : ''}`} ref={flt} aria-hidden>
         {ready.map((w) => (
-          <video key={w.id} data-id={w.id} className={hov === w.id ? 'on' : ''} muted loop playsInline preload="metadata" poster={w.thumb}>
+          <video key={w.id} data-id={w.id} className={hov === w.id ? 'on' : ''} muted loop playsInline preload="metadata" poster={`/home/w_${w.id}.jpg`}>
             <source src={`/home/w_${w.id}.mp4`} type="video/mp4" /><source src={`/home/w_${w.id}.webm`} type="video/webm" />
           </video>
         ))}
         <span className="wl-float-tag">눌러서 미리보기</span>
-      </div>
+      </div>}
     </div>
   )
 }
@@ -317,6 +318,12 @@ function Device({ kind, src, label, onStep }) {
   const box = useRef(null)
   const cur = useRef(null)
   const [loaded, setLoaded] = useState(false)
+  const [near, setNear] = useState(false)
+  useEffect(() => {
+    // 실시간 견본 화면은 무거우니 그 칸 가까이 왔을 때만 불러온다(휴대폰 첫 로딩 가볍게).
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setNear(true); io.disconnect() } }, { rootMargin: '400px' })
+    io.observe(box.current); return () => io.disconnect()
+  }, [])
   useAutoScroll(ref, loaded && kind !== 'pc')
   useTour(ref, cur, loaded && kind === 'pc', onStep || (() => {}))
   useEffect(() => {
@@ -337,7 +344,7 @@ function Device({ kind, src, label, onStep }) {
     <div className={`device ${kind}`} ref={box}>
       <div className="device-bar"><i /><i /><i /><span>{kind === 'pc' ? 'pulsr.kr/work/cafe' : ''}</span></div>
       <div className="device-screen">
-        <iframe ref={ref} src={src} title={label} loading="eager" tabIndex={-1} onLoad={() => setLoaded(true)} />
+        <iframe ref={ref} src={near ? src : undefined} title={label} tabIndex={-1} onLoad={() => near && setLoaded(true)} />
         {kind === 'pc' && <span className="cursor" ref={cur} aria-hidden />}
       </div>
     </div>

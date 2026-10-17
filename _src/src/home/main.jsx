@@ -13,3 +13,4 @@ if (t) document.documentElement.dataset.theme = t
 
 const fromTx = initTransitions()
 createRoot(document.getElementById('root')).render(<App fromTx={fromTx} />)
+requestAnimationFrame(() => requestAnimationFrame(() => document.getElementById('boot')?.remove()))
