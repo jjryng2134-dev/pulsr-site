@@ -9,8 +9,8 @@ const reduce = typeof window !== 'undefined' && window.matchMedia('(prefers-redu
 const OFFER = { price: '확정 전', days: '확정 전', upkeep: '0원', tentative: true }
 
 const WORKS = [
-  { id: 'cafe', name: '온결 커피', biz: '카페·베이커리', feat: '메뉴 담기 → 픽업 시간 → 주문서', tech: ['React', 'GSAP'], href: '/work/cafe/', ready: true },
-  { id: 'clinic', name: '병원 예약', biz: '피부과·치과', feat: '진료 예약 달력, 과목 필터', tech: ['React'] },
+  { id: 'cafe', name: '온결 커피', biz: '카페·베이커리', feat: '메뉴 담기 → 픽업 시간 → 주문서', tech: ['React', 'GSAP'], href: '/work/cafe/', ready: true, thumb: '/work/cafe/img/cafe_hero.jpg' },
+  { id: 'clinic', name: '맑은결 피부과', biz: '피부과·치과', feat: '남은 자리 보이는 예약 달력 → 알림톡 미리보기', tech: ['React', 'GSAP'], href: '/work/clinic/', ready: true, thumb: '/work/clinic/img/clinic_hero.jpg' },
   { id: 'interior', name: '인테리어', biz: '시공·리모델링', feat: '3D 방 돌려 보기, 전후 비교, 평수 견적', tech: ['Three.js', 'React'] },
   { id: 'academy', name: '학원 상담', biz: '학원·교습소', feat: '3분 레벨 진단 → 상담 신청', tech: ['React'] },
   { id: 'detail', name: '상품 상세', biz: '쇼핑 상세페이지', feat: '스크롤 연출, 옵션·가격 계산', tech: ['GSAP', 'React'] },
@@ -219,7 +219,7 @@ export default function App() {
           <div className="sec-head rv">
             <p className="kicker">Works · 견본</p>
             <h2>구경만 하지 말고 <em>직접 써 보세요</em></h2>
-            <p>업종마다 손님이 실제로 쓰는 기능을 하나씩 넣었어요. 견본 속 가게는 모두 가상 가게이고, 나머지 다섯 개도 차례로 열립니다.</p>
+            <p>업종마다 손님이 실제로 쓰는 기능을 하나씩 넣었어요. 견본 속 가게는 모두 가상 가게이고, 나머지 견본도 차례로 열립니다.</p>
           </div>
           <div className="w-grid">
             {WORKS.map((w, i) => {
@@ -227,7 +227,7 @@ export default function App() {
               return (
                 <Tag key={w.id} className={`w-card ${w.ready ? 'ready' : 'soon'}`} {...(w.ready ? { href: w.href } : {})}>
                   <div className="w-thumb">
-                    {w.ready ? <img src="/work/cafe/img/cafe_hero.jpg" alt="" /> : <span className="w-num">0{i + 1}</span>}
+                    {w.ready ? <img src={w.thumb} alt="" /> : <span className="w-num">0{i + 1}</span>}
                     <span className={`w-state ${w.ready ? 'on' : ''}`}>{w.ready ? '써 보기 가능' : '제작 중'}</span>
                   </div>
                   <div className="w-body">

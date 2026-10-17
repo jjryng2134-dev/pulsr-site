@@ -11,6 +11,7 @@ export default defineConfig({
       input: {
         home: resolve(__dirname, 'index.html'),
         cafe: resolve(__dirname, 'work/cafe/index.html'),
+        clinic: resolve(__dirname, 'work/clinic/index.html'),
       },
     },
   },
