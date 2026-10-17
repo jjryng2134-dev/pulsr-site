@@ -159,3 +159,8 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spa
 .stage-steps li.on { background: var(--lime); color: var(--ink); border-color: var(--lime); transform: translateY(-2px); box-shadow: 0 8px 22px -8px rgba(215, 239, 129, .6) }
 .stage-steps li.on b { background: var(--ink); color: var(--lime) }
 @media (max-width: 640px) { .glow { width: 360px; height: 360px; right: -20%; top: 50% } .stage-steps li { font-size: 11px } }
+@media (max-width: 640px) {
+  .hero-stage { margin-bottom: 70px }
+  .stage-cap { position: absolute; left: 0; right: 0; top: calc(100% + 12px); bottom: auto }
+  .stage-cap p { font-size: 11px }
+}
