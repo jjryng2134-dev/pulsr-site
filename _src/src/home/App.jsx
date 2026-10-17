@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
+import { Preview, Levels, Estimate, Contact, Compare, Faq, useFilter } from './Sections.jsx'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -9,12 +10,12 @@ const reduce = typeof window !== 'undefined' && window.matchMedia('(prefers-redu
 const OFFER = { price: '확정 전', days: '확정 전', upkeep: '0원', tentative: true }
 
 const WORKS = [
-  { id: 'cafe', name: '온결 커피', biz: '카페·베이커리', feat: '메뉴 담기 → 픽업 시간 → 주문서', tech: ['React', 'GSAP'], href: '/work/cafe/', ready: true, thumb: '/work/cafe/img/cafe_hero.jpg' },
-  { id: 'clinic', name: '맑은결 피부과', biz: '피부과·치과', feat: '남은 자리 보이는 예약 달력 → 알림톡 미리보기', tech: ['React', 'GSAP'], href: '/work/clinic/', ready: true, thumb: '/work/clinic/img/clinic_hero.jpg' },
-  { id: 'interior', name: '오롯 인테리어', biz: '시공·리모델링', feat: '3D 방 재질 바꾸기, 전후 비교, 평수 견적', tech: ['Three.js', 'React', 'GSAP'], href: '/work/interior/', ready: true, thumb: '/work/interior/img/int_hero.jpg' },
-  { id: 'academy', name: '한걸음 수학', biz: '학원·교습소', feat: '3분 레벨 진단, 약한 단원 분석, 남은 자리 시간표', tech: ['React', 'GSAP'], href: '/work/academy/', ready: true, thumb: '/work/academy/img/aca_hero.jpg' },
-  { id: 'detail', name: '아침결 그래놀라', biz: '쇼핑 상세페이지', feat: '스크롤로 펼쳐지는 사진, 옵션·수량·배송비 계산, 장바구니', tech: ['GSAP', 'React'], href: '/work/detail/', ready: true, thumb: '/work/detail/img/gr1_hero.jpg' },
-  { id: 'class', name: '원데이 클래스', biz: '공방·클래스', feat: '남은 자리 있는 날짜로 예약', tech: ['React'] },
+  { id: 'cafe', tags: ['주문'], name: '온결 커피', biz: '카페·베이커리', feat: '메뉴 담기 → 픽업 시간 → 주문서', tech: ['React', 'GSAP'], href: '/work/cafe/', ready: true, thumb: '/work/cafe/img/cafe_hero.jpg' },
+  { id: 'clinic', tags: ['예약'], name: '맑은결 피부과', biz: '피부과·치과', feat: '남은 자리 보이는 예약 달력 → 알림톡 미리보기', tech: ['React', 'GSAP'], href: '/work/clinic/', ready: true, thumb: '/work/clinic/img/clinic_hero.jpg' },
+  { id: 'interior', tags: ['견적·진단', '3D'], name: '오롯 인테리어', biz: '시공·리모델링', feat: '3D 방 재질 바꾸기, 전후 비교, 평수 견적', tech: ['Three.js', 'React', 'GSAP'], href: '/work/interior/', ready: true, thumb: '/work/interior/img/int_hero.jpg' },
+  { id: 'academy', tags: ['견적·진단'], name: '한걸음 수학', biz: '학원·교습소', feat: '3분 레벨 진단, 약한 단원 분석, 남은 자리 시간표', tech: ['React', 'GSAP'], href: '/work/academy/', ready: true, thumb: '/work/academy/img/aca_hero.jpg' },
+  { id: 'detail', tags: ['주문', '스크롤 연출'], name: '아침결 그래놀라', biz: '쇼핑 상세페이지', feat: '스크롤로 펼쳐지는 사진, 옵션·수량·배송비 계산, 장바구니', tech: ['GSAP', 'React'], href: '/work/detail/', ready: true, thumb: '/work/detail/img/gr1_hero.jpg' },
+  { id: 'class', tags: ['예약'], name: '원데이 클래스', biz: '공방·클래스', feat: '남은 자리 있는 날짜로 예약', tech: ['React'] },
 ]
 
 function useAutoScroll(ref, active) {
@@ -140,6 +141,17 @@ export default function App() {
   const root = useRef(null)
   const stage = useRef(null)
   const [step, setStep] = useState(-1)
+  const [pv, setPv] = useState(null)
+  const [preset, setPreset] = useState(null)
+  const { tag, setTag, TAGS, list } = useFilter(WORKS)
+  const [hideCta, setHideCta] = useState(false)
+  useEffect(() => {
+    // 견적·상담 칸이 보이는 동안엔 휴대폰 하단 고정 버튼을 숨겨 입력 버튼을 가리지 않게 한다.
+    const seen = new Set()
+    const io = new IntersectionObserver((es) => { es.forEach((e) => (e.isIntersecting ? seen.add(e.target.id) : seen.delete(e.target.id))); setHideCta(seen.size > 0) })
+    ;['estimate', 'contact'].forEach((id) => io.observe(document.getElementById(id)))
+    return () => io.disconnect()
+  }, [])
   useEffect(() => {
     if (reduce) return
     const ctx = gsap.context(() => {
@@ -172,7 +184,7 @@ export default function App() {
     <div ref={root}>
       <header className="nav">
         <a className="logo" href="/">PULS<b>R</b></a>
-        <nav><a href="#works">견본</a><a href="#how">진행 방식</a><a href="#contact">문의</a></nav>
+        <nav><a href="#works">견본</a><a href="#estimate">견적</a><a href="#compare">비교</a><a href="#faq">자주 묻는 것</a></nav>
         <a className="nav-cta" href="#contact">무료 상담</a>
       </header>
 
@@ -221,29 +233,37 @@ export default function App() {
             <h2>구경만 하지 말고 <em>직접 써 보세요</em></h2>
             <p>업종마다 손님이 실제로 쓰는 기능을 하나씩 넣었어요. 견본 속 가게는 모두 가상 가게이고, 나머지 견본도 차례로 열립니다.</p>
           </div>
+          <div className="w-filter rv">{TAGS.map((t) => <button key={t} className={tag === t ? 'on' : ''} onClick={() => setTag(t)}>{t}</button>)}</div>
           <div className="w-grid">
-            {WORKS.map((w, i) => {
-              const Tag = w.ready ? 'a' : 'div'
+            {list.map((w) => {
+              const i = WORKS.indexOf(w)
               return (
-                <Tag key={w.id} className={`w-card ${w.ready ? 'ready' : 'soon'}`} {...(w.ready ? { href: w.href } : {})}>
-                  <div className="w-thumb">
+                <div key={w.id} className={`w-card ${w.ready ? 'ready' : 'soon'}`}>
+                  <button className="w-thumb" disabled={!w.ready} onClick={() => setPv(w)} aria-label={`${w.name} 미리보기`}>
                     {w.ready ? <img src={w.thumb} alt="" /> : <span className="w-num">0{i + 1}</span>}
                     <span className={`w-state ${w.ready ? 'on' : ''}`}>{w.ready ? '써 보기 가능' : '제작 중'}</span>
-                  </div>
+                    {w.ready && <span className="w-play">PC·휴대폰으로 미리보기</span>}
+                  </button>
                   <div className="w-body">
                     <p className="w-biz">{w.biz}</p>
                     <h3>{w.name}</h3>
                     <p className="w-feat">{w.feat}</p>
-                    <p className="w-tech">{w.tech.map((t) => <span key={t}>{t}</span>)}</p>
+                    <div className="w-foot"><p className="w-tech">{w.tech.map((t) => <span key={t}>{t}</span>)}</p>{w.ready && <a href={w.href} target="_blank" rel="noreferrer">새 창 ↗</a>}</div>
                   </div>
-                </Tag>
+                </div>
               )
             })}
           </div>
         </div>
       </section>
 
-      <footer className="foot" id="contact">
+      <Levels works={WORKS} onPreview={setPv} />
+      <Estimate onSend={(p) => { setPreset(p); document.getElementById('contact').scrollIntoView({ behavior: 'smooth' }) }} />
+      <Compare />
+      <Faq />
+      <Contact preset={preset} />
+
+      <footer className="foot">
         <div className="wrap foot-in">
           <div>
             <a className="logo" href="/">PULS<b>R</b></a>
@@ -253,7 +273,8 @@ export default function App() {
         </div>
       </footer>
 
-      <a className="m-cta" href="#contact">무료 상담 신청</a>
+      <a className={`m-cta ${hideCta ? 'hide' : ''}`} href="#contact">무료 상담 신청</a>
+      {pv && <Preview work={pv} onClose={() => setPv(null)} />}
     </div>
   )
 }

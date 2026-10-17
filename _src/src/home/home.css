@@ -164,3 +164,194 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spa
   .stage-cap { position: absolute; left: 0; right: 0; top: calc(100% + 12px); bottom: auto }
   .stage-cap p { font-size: 11px }
 }
+
+/* ── 3단계: 갤러리 필터·미리보기 ── */
+.w-filter { display: flex; flex-wrap: wrap; gap: 8px; margin: -16px 0 24px }
+.w-filter button { padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: background .2s, color .2s }
+.w-filter button.on { background: var(--ink); color: var(--lime); border-color: var(--ink) }
+button.w-thumb { display: block; width: 100%; border: 0; padding: 0; font: inherit; cursor: pointer; color: inherit }
+button.w-thumb:disabled { cursor: default }
+.w-play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -40%); padding: 11px 18px; border-radius: 999px; background: var(--ink); color: var(--lime); font-size: 13px; font-weight: 700; opacity: 0; transition: opacity .3s, transform .3s; white-space: nowrap }
+.w-card.ready:hover .w-play, button.w-thumb:focus-visible .w-play { opacity: 1; transform: translate(-50%, -50%) }
+.w-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px }
+.w-foot .w-tech { margin: 0 }
+.w-foot a { font-size: 13px; font-weight: 700; color: var(--deep); white-space: nowrap }
+.pv-over { position: fixed; inset: 0; z-index: 80; background: rgba(4, 12, 10, .72); backdrop-filter: blur(6px); display: grid; place-items: center; padding: 20px; animation: pvIn .25s }
+@keyframes pvIn { from { opacity: 0 } }
+.pv { width: min(1280px, 100%); height: min(860px, 100%); display: flex; flex-direction: column; background: #0c1c1a; border-radius: 22px; overflow: hidden; border: 1px solid rgba(244, 243, 235, .1); animation: pvUp .4s cubic-bezier(.2, .9, .2, 1) }
+@keyframes pvUp { from { transform: translateY(30px) scale(.97) } }
+.pv-bar { display: flex; align-items: center; gap: 14px; padding: 12px 14px 12px 20px; color: var(--paper) }
+.pv-bar > div:first-child { display: flex; flex-direction: column; line-height: 1.3; margin-right: auto; min-width: 0 }
+.pv-bar > div:first-child span { font-size: 12px; opacity: .6 }
+.pv-seg { display: inline-flex; padding: 4px; border-radius: 999px; background: rgba(244, 243, 235, .08) }
+.pv-seg button { padding: 7px 16px; border-radius: 999px; border: 0; background: none; color: inherit; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer }
+.pv-seg button.on { background: var(--lime); color: var(--ink) }
+.pv-open { font-size: 13px; font-weight: 700; color: var(--lime) }
+.pv-x { width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgba(244, 243, 235, .1); color: var(--paper); cursor: pointer; font-size: 14px }
+.pv-stage { flex: 1; min-height: 0; display: grid; place-items: center; padding: 0 14px 14px; background: radial-gradient(60% 60% at 50% 40%, #1d4a44, #0c1c1a) }
+.pv-stage iframe { border: 0; background: #fff; display: block }
+.pv-stage { position: relative; overflow: hidden }
+.pv-stage.pc { display: block; padding: 0 }
+.pv-stage.pc iframe { position: absolute; left: 0; top: 0; transform-origin: 0 0 }
+.pv-stage.m iframe { width: 390px; max-width: 100%; height: min(780px, 100%); border-radius: 34px; border: 8px solid #1b2c29; box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .6) }
+.pv-over.center { place-items: center }
+
+/* ── 기술 단계 ── */
+.levels { background: var(--deep2); color: var(--paper); padding: clamp(80px, 11vw, 140px) 0; position: relative; overflow: hidden }
+.levels::before { content: ''; position: absolute; left: -10%; top: -30%; width: 60%; height: 120%; background: radial-gradient(circle, rgba(215, 239, 129, .12), transparent 60%); pointer-events: none }
+.sec-head.dark .kicker { color: var(--lime) }
+.sec-head.dark h2 em { color: var(--lime) }
+.sec-head.dark > p:last-child { color: rgba(244, 243, 235, .65) }
+.lv-grid { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px }
+.lv { position: relative; padding: 28px 24px 24px; border-radius: 22px; background: rgba(244, 243, 235, .04); border: 1px solid rgba(244, 243, 235, .1); display: flex; flex-direction: column; min-height: 340px; transition: background .35s, border-color .35s, transform .35s }
+.lv:hover { background: rgba(215, 239, 129, .08); border-color: rgba(215, 239, 129, .5); transform: translateY(-6px) }
+.lv-n { font-family: var(--serif); font-style: italic; font-size: 64px; line-height: 1; color: var(--lime) }
+.lv-tech { font-family: var(--mono); font-size: 12px; margin-top: 18px; color: rgba(244, 243, 235, .55) }
+.lv h3 { font-size: 30px; margin: 4px 0 12px }
+.lv-d { font-size: 15px; color: rgba(244, 243, 235, .72); flex: 1 }
+.lv-works { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px }
+.lv-works button { padding: 7px 12px; border-radius: 999px; border: 1px solid rgba(244, 243, 235, .2); background: none; color: var(--paper); font: inherit; font-size: 12px; cursor: pointer; transition: background .2s, color .2s }
+.lv-works button:hover { background: var(--lime); color: var(--ink) }
+
+/* ── 견적 계산기 ── */
+.est { padding: clamp(80px, 11vw, 140px) 0 }
+.est .sec-head { grid-template-columns: 1fr; margin-bottom: 28px }
+.est-in { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start }
+.e-l { font-size: 14px; font-weight: 700; margin: 24px 0 10px }
+.e-bases { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px }
+.e-bases button { text-align: left; padding: 16px; border-radius: 16px; border: 1.5px solid var(--line); background: #fff; font: inherit; cursor: pointer; display: flex; flex-direction: column; gap: 2px; transition: border-color .2s, box-shadow .2s }
+.e-bases button b { font-size: 16px }
+.e-bases button span { font-size: 13px; color: var(--mute) }
+.e-bases button.on { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); background: #fbfdf2 }
+.e-feats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px }
+.e-feats label, .e-photo { position: relative; display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 16px; border: 1.5px solid var(--line); background: #fff; cursor: pointer; transition: border-color .2s, background .2s }
+.e-feats input, .e-photo input { position: absolute; opacity: 0; pointer-events: none }
+.e-feats i, .e-photo i { flex: 0 0 22px; height: 22px; border-radius: 7px; border: 1.5px solid rgba(7, 18, 15, .3); display: grid; place-items: center; transition: background .2s, border-color .2s }
+.e-feats label.on, .e-photo.on { border-color: var(--ink); background: #fbfdf2 }
+.e-feats label.on i, .e-photo.on i { background: var(--ink); border-color: var(--ink) }
+.e-feats label.on i::after, .e-photo.on i::after { content: '✓'; color: var(--lime); font-size: 13px; font-style: normal; font-weight: 900 }
+.e-feats span, .e-photo span { display: flex; flex-direction: column; line-height: 1.35; min-width: 0; flex: 1 }
+.e-feats b, .e-photo b { font-size: 15px }
+.e-feats small, .e-photo small { font-size: 12px; color: var(--mute) }
+.e-feats a { font-size: 12px; font-weight: 700; color: var(--deep); padding: 4px 8px; border-radius: 6px; background: var(--paper) }
+.e-photo { margin-top: 8px }
+.e-out { position: sticky; top: 96px; padding: 28px; border-radius: 26px; background: var(--deep2); color: var(--paper); box-shadow: 0 30px 60px -30px rgba(7, 18, 15, .6) }
+.e-tag { display: inline-block; font-family: var(--mono); font-size: 11px; padding: 4px 10px; border-radius: 6px; background: rgba(244, 243, 235, .1); color: rgba(244, 243, 235, .7); margin-bottom: 18px }
+.e-t { font-size: 13px; color: rgba(244, 243, 235, .6) }
+.e-n { font-size: 22px; font-weight: 700 }
+.e-n b { display: inline-block; font-size: clamp(56px, 6vw, 84px); font-weight: 900; letter-spacing: -.05em; color: var(--lime); line-height: 1.05; margin-right: 4px }
+.roll { animation: roll .45s cubic-bezier(.2, .9, .2, 1) }
+@keyframes roll { from { transform: translateY(40%); opacity: 0; filter: blur(4px) } }
+.e-d { font-size: 15px; color: rgba(244, 243, 235, .8) }
+.e-d b { color: var(--paper); font-size: 18px }
+.e-out ul { list-style: none; margin: 20px 0; border-top: 1px solid rgba(244, 243, 235, .12) }
+.e-out li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid rgba(244, 243, 235, .08); font-size: 14px; color: rgba(244, 243, 235, .8) }
+.btn.full { width: 100%; justify-content: center; border: 0; font: inherit; font-weight: 700; cursor: pointer }
+.e-note { font-size: 12px; color: rgba(244, 243, 235, .5); margin-top: 12px }
+
+/* ── 비교표 ── */
+.cmp { padding: 0 0 clamp(80px, 11vw, 140px) }
+.cmp-scroll { overflow-x: auto; border-radius: 22px; border: 1px solid var(--line); background: #fff }
+.cmp table { width: 100%; min-width: 760px; border-collapse: collapse }
+.cmp th, .cmp td { padding: 18px 20px; text-align: left; border-bottom: 1px solid var(--line); font-size: 15px; vertical-align: top }
+.cmp thead th { font-size: 14px; color: var(--mute); background: #fafaf4 }
+.cmp tbody th { font-size: 14px; color: var(--mute); font-weight: 700; width: 150px }
+.cmp tbody tr:last-child th, .cmp tbody tr:last-child td { border-bottom: 0 }
+.cmp .us { background: var(--deep2); color: var(--paper); font-weight: 700 }
+.cmp thead .us { color: var(--lime); background: var(--deep2) }
+.src { font-size: 12px; color: var(--mute); margin-top: 12px }
+
+/* ── FAQ ── */
+.faq { padding: 0 0 clamp(80px, 11vw, 140px) }
+.faq-in { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(24px, 4vw, 64px); align-items: start }
+.faq .sec-head { grid-template-columns: 1fr; position: sticky; top: 100px }
+.fq { border-bottom: 1px solid var(--line) }
+.fq button { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 0; border: 0; background: none; font: inherit; font-size: 18px; font-weight: 700; text-align: left; cursor: pointer; color: var(--ink) }
+.fq button i { flex: 0 0 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-style: normal; font-size: 20px; transition: transform .35s, background .35s }
+.fq.on button i { transform: rotate(45deg); background: var(--lime); border-color: var(--lime) }
+.fa { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .4s cubic-bezier(.2, .8, .2, 1) }
+.fq.on .fa { grid-template-rows: 1fr }
+.fa > div { overflow: hidden }
+.fa p { color: var(--mute); font-size: 16px; padding-right: 50px }
+.fa small { display: block; font-family: var(--mono); font-size: 11px; color: rgba(7, 18, 15, .45); margin: 10px 0 22px }
+
+/* ── 상담 신청 ── */
+.contact { background: radial-gradient(100% 80% at 20% 0%, #1f5a52, var(--deep2) 60%); color: var(--paper); padding: clamp(80px, 11vw, 140px) 0 }
+.contact-in { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(24px, 4vw, 64px); align-items: start }
+.contact .sec-head { grid-template-columns: 1fr }
+.c-card { background: var(--paper); color: var(--ink); border-radius: 26px; padding: 28px; box-shadow: 0 40px 80px -30px rgba(0, 0, 0, .6) }
+.c-steps { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; margin-bottom: 26px }
+.c-steps button { width: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 0 0 10px; border: 0; border-bottom: 3px solid var(--line); background: none; font: inherit; font-size: 12px; font-weight: 700; color: var(--mute); cursor: pointer; text-align: left; transition: border-color .3s, color .3s }
+.c-steps button:disabled { cursor: default }
+.c-steps b { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: rgba(7, 18, 15, .08); font-size: 12px }
+.c-steps li.past button { border-color: var(--deep); color: var(--ink) }
+.c-steps li.past b { background: var(--deep); color: var(--lime) }
+.c-steps li.on button { border-color: var(--ink); color: var(--ink) }
+.c-steps li.on b { background: var(--lime); color: var(--ink) }
+.c-body { min-height: 230px; animation: cIn .4s cubic-bezier(.2, .9, .2, 1) }
+@keyframes cIn { from { opacity: 0; transform: translateX(24px) } }
+.c-body h3 { font-size: 24px; margin-bottom: 16px }
+.c-body .h2nd { margin-top: 24px }
+.c-chips { display: flex; flex-wrap: wrap; gap: 8px }
+.c-chips button { padding: 12px 18px; border-radius: 14px; border: 1.5px solid var(--line); background: #fff; font: inherit; font-size: 15px; font-weight: 500; cursor: pointer; transition: all .18s }
+.c-chips button.on { background: var(--ink); color: var(--lime); border-color: var(--ink); font-weight: 700 }
+.c-body input, .c-body textarea { width: 100%; min-width: 0; padding: 14px 16px; border-radius: 14px; border: 1.5px solid var(--line); background: #fff; font: inherit; font-size: 16px; outline: none; margin-bottom: 8px; resize: vertical }
+.c-body input:focus, .c-body textarea:focus { border-color: var(--deep) }
+.c-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px }
+.c-sum { border-top: 2px solid var(--ink); margin-bottom: 16px }
+.c-sum div { display: grid; grid-template-columns: 84px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 15px }
+.c-sum dt { color: var(--mute) }
+.c-sum dd { min-width: 0; overflow-wrap: anywhere }
+.c-agree { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--mute); cursor: pointer }
+.c-agree input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--deep); flex: none }
+.c-agree a { color: var(--ink); text-decoration: underline }
+.c-err { color: #b8432f; font-size: 14px; font-weight: 700; margin-top: 10px }
+.c-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 22px }
+.c-nav .btn { border: 0; font: inherit; font-weight: 700; cursor: pointer }
+.c-back { border: 0; background: none; font: inherit; font-size: 14px; font-weight: 700; color: var(--mute); cursor: pointer }
+.c-done { width: min(460px, 100%); background: var(--paper); color: var(--ink); border-radius: 26px; padding: 30px; text-align: center; animation: pvUp .4s cubic-bezier(.2, .9, .2, 1) }
+.c-ok { display: inline-grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--lime); font-size: 28px; font-weight: 900; animation: okPop .6s cubic-bezier(.3, 1.8, .5, 1) }
+@keyframes okPop { from { transform: scale(0) } }
+.c-done h3 { font-size: 24px; margin: 14px 0 6px }
+.c-done > p { color: var(--mute); font-size: 15px }
+.c-done pre { text-align: left; white-space: pre-wrap; font-family: var(--sans); font-size: 13px; background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin: 16px 0 4px; max-height: 200px; overflow: auto }
+.c-done .c-back { margin-top: 12px }
+
+@media (max-width: 980px) {
+  .lv-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+  .est-in, .faq-in, .contact-in { grid-template-columns: minmax(0, 1fr) }
+  .e-out, .faq .sec-head { position: static }
+}
+@media (max-width: 640px) {
+  .lv-grid { grid-template-columns: minmax(0, 1fr) }
+  .lv { min-height: 0 }
+  .e-bases { grid-template-columns: minmax(0, 1fr) }
+  .e-feats { grid-template-columns: minmax(0, 1fr) }
+  .e-out { padding: 22px }
+  .w-play { display: none }
+  .c-card { padding: 20px 16px }
+  .c-steps button { font-size: 11px }
+  .c-row { grid-template-columns: minmax(0, 1fr) }
+  .fq button { font-size: 16px }
+  .fa p { padding-right: 0 }
+  .pv-over { padding: 0 }
+  .pv { border-radius: 0; height: 100% }
+  .pv-bar { flex-wrap: wrap; padding: 10px 12px; gap: 10px }
+  .pv-bar > div:first-child { flex: 1 1 100% }
+  .pv-stage.m iframe { border-width: 0; border-radius: 0; width: 100%; height: 100% }
+  .pv-stage { padding: 0 }
+}
+
+.m-cta { transition: transform .35s cubic-bezier(.2, .9, .2, 1), opacity .35s }
+.m-cta.hide { transform: translateY(140%); opacity: 0; pointer-events: none }
+@media (max-width: 640px) {
+  .cmp-scroll { overflow: visible; border: 0; background: none; border-radius: 0 }
+  .cmp table, .cmp tbody { display: block; min-width: 0 }
+  .cmp thead { display: none }
+  .cmp tbody tr { display: grid; grid-template-columns: minmax(0, 1fr); margin-bottom: 10px; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); background: #fff }
+  .cmp tbody th { width: auto; padding: 12px 16px 6px; border: 0; color: var(--ink); font-size: 15px }
+  .cmp td { padding: 6px 16px; border: 0; font-size: 14px; display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 10px }
+  .cmp td::before { content: attr(data-col); color: var(--mute); font-size: 12px; font-weight: 700; padding-top: 2px }
+  .cmp td.us { padding: 10px 16px 12px; margin-top: 4px }
+  .cmp td.us::before { color: var(--lime) }
+}
