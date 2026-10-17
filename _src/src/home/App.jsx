@@ -2,12 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { Preview, Levels, Estimate, Contact, Compare, Faq, useFilter } from './Sections.jsx'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Lenis from 'lenis'
+import 'lenis/dist/lenis.css'
 
 gsap.registerPlugin(ScrollTrigger)
 const reduce = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-// 가격·기간은 견본 완성 뒤 경쟁 가격과 나란히 놓고 확정(계획 08 5-3). 그 전엔 임시값 표시.
-const OFFER = { price: '확정 전', days: '확정 전', upkeep: '0원', tentative: true }
 
 const WORKS = [
   { id: 'cafe', tags: ['주문'], name: '온결 커피', biz: '카페·베이커리', feat: '메뉴 담기 → 픽업 시간 → 주문서', tech: ['React', 'GSAP'], href: '/work/cafe/', ready: true, thumb: '/work/cafe/img/cafe_hero.jpg' },
@@ -105,6 +104,82 @@ function useTour(frame, cursor, active, onStep) {
   }, [active])
 }
 
+
+// 첫 화면 영상(견본 5종 실제 사용 장면 녹화) 구간. 시간은 public/home/reel.mp4 기준.
+const CHAPTERS = [
+  { at: 0, t: '카페 · 픽업 주문', href: '/work/cafe/' },
+  { at: 4.25, t: '상세페이지 · 스크롤 연출', href: '/work/detail/' },
+  { at: 9.45, t: '인테리어 · 전후 비교와 3D', href: '/work/interior/' },
+  { at: 15.98, t: '피부과 · 예약', href: '/work/clinic/' },
+  { at: 20.18, t: '학원 · 레벨 진단', href: '/work/academy/' },
+]
+
+const Chars = ({ t, cls = '' }) => [...t].map((c, i) => <span key={i} className={`ch ${cls}`}>{c === ' ' ? ' ' : c}</span>)
+
+// 첫 방문 인트로: 로고가 올라오고 빨간 줄이 차면 막이 걷히며 첫 화면이 열린다. 같은 창에서 다시 오면 생략.
+function Intro({ skip, onDone }) {
+  const el = useRef(null)
+  const [on, setOn] = useState(() => {
+    if (skip || reduce) return false
+    try { return !sessionStorage.getItem('pulsr-intro') } catch { return true }
+  })
+  useEffect(() => {
+    if (!on) { onDone(); return }
+    try { sessionStorage.setItem('pulsr-intro', '1') } catch {}
+    document.documentElement.classList.add('locked')
+    const n = { v: 0 }, num = el.current.querySelector('.in-num')
+    const tl = gsap.timeline({ onComplete: () => setOn(false) })
+    tl.from('.in-logo span', { yPercent: 110, duration: 0.55, ease: 'power4.out', stagger: 0.045 })
+      .to('.in-bar i', { scaleX: 1, duration: 0.75, ease: 'power2.inOut' }, 0.05)
+      .to(n, { v: 100, duration: 0.75, ease: 'power2.inOut', onUpdate: () => { num.textContent = String(Math.round(n.v)).padStart(3, '0') } }, 0.05)
+      .to('.in-logo, .in-meta', { opacity: 0, y: -16, duration: 0.25, ease: 'power2.in' }, 0.85)
+      .add(() => { document.documentElement.classList.remove('locked'); onDone() }, 0.95)
+      .to('.in-b', { yPercent: -100, duration: 0.7, ease: 'expo.inOut' }, 0.9)
+      .to('.in-r', { yPercent: -100, duration: 0.7, ease: 'expo.inOut' }, 1.0)
+    return () => { tl.kill(); document.documentElement.classList.remove('locked') }
+  }, [])
+  if (!on) return null
+  return (
+    <div className="intro" ref={el} aria-hidden>
+      <i className="in-r" />
+      <div className="in-b">
+        <p className="in-logo">{'PULSR'.split('').map((c, i) => <span key={i} className={c === 'R' ? 'r' : ''}>{c}</span>)}</p>
+        <div className="in-meta"><span>가게 홈페이지 만드는 곳</span><span className="in-num">000</span></div>
+        <div className="in-bar"><i /></div>
+      </div>
+    </div>
+  )
+}
+
+function Reel() {
+  const v = useRef(null)
+  const [ch, setCh] = useState(0)
+  const [src] = useState(() => (window.matchMedia('(max-width: 640px)').matches ? '/home/reel_m' : '/home/reel'))
+  useEffect(() => {
+    const el = v.current
+    const tick = () => { const t = el.currentTime; let k = 0; CHAPTERS.forEach((c, i) => { if (t >= c.at) k = i }); setCh(k) }
+    el.addEventListener('timeupdate', tick)
+    // 화면 밖에 있을 땐 멈춰서 휴대폰 배터리를 아낀다.
+    const io = new IntersectionObserver(([e]) => { if (reduce) return; e.isIntersecting ? el.play().catch(() => {}) : el.pause() })
+    io.observe(el)
+    return () => { el.removeEventListener('timeupdate', tick); io.disconnect() }
+  }, [])
+  const c = CHAPTERS[ch]
+  return (
+    <div className="kh-reel">
+      <video ref={v} poster="/home/reel_poster.jpg" muted loop playsInline autoPlay={!reduce} controls={reduce} preload="auto" aria-label="견본 5종을 실제로 쓰는 장면">
+        <source src={`${src}.mp4`} type="video/mp4" />
+        <source src={`${src}.webm`} type="video/webm" />
+      </video>
+      <span className="kh-tag"><span className="dot" />실제 견본을 쓰는 장면</span>
+      <div className="kh-chap">
+        <p><b>0{ch + 1}</b><span>/ 05</span>{c.t}</p>
+        <a href={c.href}>이 견본 써 보기 <span aria-hidden>↗</span></a>
+      </div>
+    </div>
+  )
+}
+
 function Device({ kind, src, label, onStep }) {
   const ref = useRef(null)
   const box = useRef(null)
@@ -137,7 +212,7 @@ function Device({ kind, src, label, onStep }) {
   )
 }
 
-export default function App() {
+export default function App({ fromTx }) {
   const root = useRef(null)
   const stage = useRef(null)
   const [step, setStep] = useState(-1)
@@ -145,6 +220,7 @@ export default function App() {
   const [preset, setPreset] = useState(null)
   const { tag, setTag, TAGS, list } = useFilter(WORKS)
   const [hideCta, setHideCta] = useState(false)
+  const [ready, setReady] = useState(false)
   useEffect(() => {
     // 견적·상담 칸이 보이는 동안엔 휴대폰 하단 고정 버튼을 숨겨 입력 버튼을 가리지 않게 한다.
     const seen = new Set()
@@ -153,28 +229,54 @@ export default function App() {
     return () => io.disconnect()
   }, [])
   useEffect(() => {
+    // 부드러운 스크롤(Lenis). 휴대폰 터치는 기본 스크롤 그대로 둔다.
+    if (reduce) return
+    const lenis = new Lenis({ lerp: 0.1, anchors: { offset: -72 } })
+    window.__lenis = lenis
+    lenis.on('scroll', ScrollTrigger.update)
+    const raf = (t) => lenis.raf(t * 1000)
+    gsap.ticker.add(raf); gsap.ticker.lagSmoothing(0)
+    return () => { gsap.ticker.remove(raf); lenis.destroy(); window.__lenis = null }
+  }, [])
+  useEffect(() => {
+    // 인트로가 걷히는 순간 큰 글자가 한 자씩 올라온다.
+    if (!ready || reduce) return
+    const ctx = gsap.context(() => {
+      gsap.from('.kh .ch', { yPercent: 115, rotate: 6, duration: 1.1, ease: 'expo.out', stagger: 0.028, delay: 0.05 })
+      gsap.from('.k-fade', { y: 22, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.07, delay: 0.55 })
+      gsap.from('.kh-reel', { y: 120, opacity: 0, duration: 1.4, ease: 'expo.out', delay: 0.5 })
+    }, root)
+    return () => ctx.revert()
+  }, [ready])
+  useEffect(() => {
     if (reduce) return
     const ctx = gsap.context(() => {
-      gsap.from('.h-line', { yPercent: 110, duration: 1.05, ease: 'power4.out', stagger: 0.1, delay: 0.1 })
-      gsap.from('.h-fade', { y: 18, opacity: 0, duration: 0.8, ease: 'power3.out', stagger: 0.08, delay: 0.5 })
-      gsap.from('.hl-mark', { scaleX: 0, duration: 0.9, ease: 'power4.inOut', delay: 0.9 })
-      gsap.from('.device.pc', { y: 120, rotateY: -28, rotateX: 14, scale: 0.86, opacity: 0, duration: 1.6, ease: 'expo.out', delay: 0.3 })
-      gsap.from('.device.phone', { y: 220, rotate: 10, opacity: 0, duration: 1.5, ease: 'expo.out', delay: 0.65 })
-      gsap.from('.glow', { scale: 0.4, opacity: 0, duration: 2.2, ease: 'power2.out' })
-      gsap.to('.device.phone', { yPercent: -14, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } })
+      const mm = gsap.matchMedia()
+      mm.add('(min-width: 981px)', () => {
+        // 영상 창이 화면 맨 위에 닿으면 고정된 채 화면 전체로 커진다.
+        gsap.timeline({ scrollTrigger: { trigger: '.kh-stage', start: 'top top', end: '+=120%', scrub: 0.8, pin: true, anticipatePin: 1 } })
+          .fromTo('.kh-reel', { width: '62vw', height: '38.75vw', borderRadius: 28 }, { width: '100vw', height: '100vh', borderRadius: 0, ease: 'power2.inOut', duration: 1 })
+          .fromTo('.kh-chap', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.25 }, 0.7)
+          .to({}, { duration: 0.3 })
+        // 큰 글자 세 줄이 스크롤에 따라 서로 다른 방향으로 밀려난다.
+        ;[['.l1', -10], ['.l2', 7], ['.l3', -5]].forEach(([c, x]) => gsap.to(`.kh-title ${c}`, { xPercent: x, ease: 'none', scrollTrigger: { trigger: '.kh', start: 'top top', end: 'bottom top', scrub: true } }))
+      })
+      gsap.from('.device.pc', { y: 120, rotateY: -24, rotateX: 12, scale: 0.88, opacity: 0, duration: 1.5, ease: 'expo.out', scrollTrigger: { trigger: '.live', start: 'top 70%' } })
+      gsap.from('.device.phone', { y: 200, rotate: 10, opacity: 0, duration: 1.4, ease: 'expo.out', delay: 0.25, scrollTrigger: { trigger: '.live', start: 'top 70%' } })
       gsap.utils.toArray('.rv').forEach((el) => gsap.from(el, { y: 36, opacity: 0, duration: 0.85, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 86%' } }))
       gsap.from('.w-card', { y: 40, opacity: 0, duration: 0.7, stagger: 0.07, ease: 'power3.out', scrollTrigger: { trigger: '.w-grid', start: 'top 82%' } })
     }, root)
-    // 마우스를 따라 기기 화면이 살짝 기울고 빛이 따라온다(PC만).
+    // 마우스를 따라 빨간 빛이 움직이고, 아래 실시간 견본 화면은 살짝 기운다(PC만).
     const el = stage.current
     const tiltX = gsap.quickTo(el, 'rotateY', { duration: 0.8, ease: 'power3.out' })
     const tiltY = gsap.quickTo(el, 'rotateX', { duration: 0.8, ease: 'power3.out' })
-    const gx = gsap.quickTo('.glow', 'x', { duration: 1.6, ease: 'power3.out' })
-    const gy = gsap.quickTo('.glow', 'y', { duration: 1.6, ease: 'power3.out' })
+    const gx = gsap.quickTo('.kh .glow', 'x', { duration: 1.1, ease: 'power3.out' })
+    const gy = gsap.quickTo('.kh .glow', 'y', { duration: 1.1, ease: 'power3.out' })
     const move = (e) => {
-      if (window.innerWidth < 980) return
+      if (window.innerWidth < 981) return
+      gx(e.clientX); gy(e.clientY + window.scrollY)
       const nx = e.clientX / window.innerWidth - 0.5, ny = e.clientY / window.innerHeight - 0.5
-      tiltX(nx * 10); tiltY(-ny * 8); gx(nx * 240); gy(ny * 160)
+      tiltX(nx * 10); tiltY(-ny * 8)
     }
     window.addEventListener('pointermove', move)
     return () => { ctx.revert(); window.removeEventListener('pointermove', move) }
@@ -188,33 +290,40 @@ export default function App() {
         <a className="nav-cta" href="#contact">무료 상담</a>
       </header>
 
-      <section className="hero">
+      <Intro skip={fromTx} onDone={() => setReady(true)} />
+      <section className="kh">
         <div className="glow" aria-hidden />
-        <div className="hero-copy">
-          <p className="eyebrow h-fade"><span className="dot" />가게 홈페이지 만드는 곳</p>
-          <h1>
-            <span className="m"><span className="h-line">보기만 하는 견본 말고,</span></span>
-            <span className="m"><span className="h-line"><em className="hl">직접 눌러 보고<i className="hl-mark" /></em> 고르세요</span></span>
-          </h1>
-          <p className="lede h-fade">주문 받고, 예약 받고, 견적 내 주는 화면을 미리 써 보실 수 있어요. 마음에 드는 기능을 고르시면 사장님 가게에 맞춰 그대로 만들어 드립니다.</p>
-          <div className="cta h-fade">
+        <div className="kh-top">
+          <p className="eyebrow k-fade"><span className="dot" />가게 홈페이지 만드는 곳</p>
+          <p className="kh-meta k-fade">견본 5종 · 계약 전에 직접 눌러 보기</p>
+        </div>
+        <h1 className="kh-title" aria-label="구경만 하는 홈페이지 말고, 써 보는 홈페이지.">
+          <span className="kl l1" aria-hidden><Chars t="구경만 하는" /></span>
+          <span className="kl l2" aria-hidden><Chars t="홈페이지 말고," /></span>
+          <span className="kl l3" aria-hidden><Chars t="써 보는" cls="red" /><Chars t=" 홈페이지." /></span>
+        </h1>
+        <div className="kh-foot">
+          <p className="lede k-fade">주문 받고, 예약 받고, 견적 내 주는 화면을 미리 써 보실 수 있어요. 마음에 드는 기능을 고르시면 사장님 가게에 맞춰 그대로 만들어 드립니다.</p>
+          <div className="cta k-fade">
             <a className="btn lime" href="/work/cafe/">카페 견본 직접 써 보기 <span aria-hidden>↗</span></a>
-            <a className="btn line" href="#works">견본 6종 보기</a>
+            <a className="btn line" href="#works">견본 전체 보기</a>
           </div>
-          <dl className={`offer h-fade ${OFFER.tentative ? 'tentative' : ''}`}>
-            <div><dt>제작비</dt><dd>{OFFER.price}</dd></div>
-            <div><dt>첫 시안</dt><dd>{OFFER.days}</dd></div>
-            <div><dt>월 유지비</dt><dd>{OFFER.upkeep}</dd></div>
-            {OFFER.tentative && <p className="tent">가격·기간은 견본 6종 완성 뒤 확정해 이 자리에 공개합니다</p>}
-          </dl>
+        </div>
+      </section>
+      <section className="kh-stage" aria-label="견본 사용 장면 영상">
+        <Reel />
+      </section>
+
+      <section className="live">
+        <div className="live-copy">
+          <p className="kicker">Live · 지금 돌아가는 화면</p>
+          <h2 className="rv">이건 녹화가 아니라<br /><em>진짜 견본</em>이에요</h2>
+          <p className="rv">화면 속 카페 견본에서 지금 실제로 메뉴를 담고 주문을 넣고 있어요. 홈페이지를 맡기시면 손님이 이렇게 씁니다.</p>
+          <ol className="stage-steps rv">{TOUR_STEPS.map((t, i) => <li key={t} className={i === step ? 'on' : i < step ? 'past' : ''}><b>{i + 1}</b>{t}</li>)}</ol>
         </div>
         <div className="hero-stage" ref={stage} aria-label="카페 견본이 PC와 휴대폰에서 실제로 움직이는 화면">
           <Device kind="pc" src="/work/cafe/?tour" label="카페 견본 PC 화면" onStep={setStep} />
           <Device kind="phone" src="/work/cafe/?tour" label="카페 견본 휴대폰 화면" />
-          <div className="stage-cap">
-            <p><span className="dot" />녹화 영상이 아니에요. 실제 견본에서 주문이 들어가는 중입니다</p>
-            <ol className="stage-steps">{TOUR_STEPS.map((t, i) => <li key={t} className={i === step ? 'on' : i < step ? 'past' : ''}><b>{i + 1}</b>{t}</li>)}</ol>
-          </div>
         </div>
       </section>
 
@@ -258,7 +367,7 @@ export default function App() {
       </section>
 
       <Levels works={WORKS} onPreview={setPv} />
-      <Estimate onSend={(p) => { setPreset(p); document.getElementById('contact').scrollIntoView({ behavior: 'smooth' }) }} />
+      <Estimate onSend={(p) => { setPreset(p); const el = document.getElementById('contact'); window.__lenis ? window.__lenis.scrollTo(el, { offset: -72 }) : el.scrollIntoView({ behavior: 'smooth' }) }} />
       <Compare />
       <Faq />
       <Contact preset={preset} />

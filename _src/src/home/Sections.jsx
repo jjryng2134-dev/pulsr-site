@@ -15,11 +15,11 @@ export function Preview({ work, onClose }) {
   }, [])
   useEffect(() => {
     const esc = (e) => e.key === 'Escape' && onClose()
-    window.addEventListener('keydown', esc); document.body.style.overflow = 'hidden'
-    return () => { window.removeEventListener('keydown', esc); document.body.style.overflow = '' }
+    window.addEventListener('keydown', esc); document.body.style.overflow = 'hidden'; window.__lenis?.stop()
+    return () => { window.removeEventListener('keydown', esc); document.body.style.overflow = ''; window.__lenis?.start() }
   }, [])
   return (
-    <div className="pv-over" onClick={onClose}>
+    <div className="pv-over" onClick={onClose} data-lenis-prevent>
       <div className="pv" onClick={(e) => e.stopPropagation()} role="dialog" aria-label={`${work.name} 미리보기`}>
         <div className="pv-bar">
           <div><b>{work.name}</b><span>{work.biz}</span></div>
