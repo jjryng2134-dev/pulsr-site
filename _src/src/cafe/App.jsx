@@ -48,8 +48,9 @@ const fmtPhone = (v) => {
   return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7)}`
 }
 
-const load = () => { try { return JSON.parse(localStorage.getItem('ongyeol-cart') || '[]') } catch { return [] } }
-const save = (c) => { try { localStorage.setItem('ongyeol-cart', JSON.stringify(c)) } catch {} }
+const TOUR = typeof location !== 'undefined' && location.search.includes('tour')
+const load = () => { if (TOUR) return []; try { return JSON.parse(localStorage.getItem('ongyeol-cart') || '[]') } catch { return [] } }
+const save = (c) => { if (TOUR) return; try { localStorage.setItem('ongyeol-cart', JSON.stringify(c)) } catch {} }
 
 export default function App() {
   const now = useClock()
@@ -115,9 +116,9 @@ export default function App() {
         <div className="hero-shade" />
         <div className="hero-in">
           <p className={`live ${status.open ? 'on' : ''}`}><span />{status.label}<small>{status.sub}</small></p>
-          <h1><span className="mask"><span className="hero-line">오후 세 시,</span></span><span className="mask"><span className="hero-line">골목에 내리는 커피</span></span></h1>
+          <h1><span className="mask"><span className="hero-line">오는 길에 주문하면</span></span><span className="mask"><span className="hero-line">도착할 때 딱 나와요</span></span></h1>
           <div className="hero-meta">
-            <p>줄 서지 말고 미리 주문해 두세요. 도착 시간에 맞춰 내려 둡니다.</p>
+            <p>줄 서지 마세요. 찾으러 오실 시간만 골라 주시면 그때 맞춰 내려 둘게요.</p>
             <div className="hero-cta">
               <a className="btn light" href="#menu">메뉴 보고 주문하기</a>
               <a className="btn ghost" href="#visit">오시는 길</a>
@@ -131,7 +132,7 @@ export default function App() {
           <div className="menu-head reveal">
             <p className="kicker">Menu · Pickup Order</p>
             <h2>오늘 고르실 한 잔</h2>
-            <p className="lede">메뉴를 담고 픽업 시간을 고르면 주문서가 완성됩니다. 견본이라 실제 주문은 들어가지 않아요.</p>
+            <p className="lede">담고, 시간 고르고, 이름만 적으면 끝이에요. 견본이라 실제 주문은 들어가지 않아요.</p>
           </div>
           <div className="tabs" role="tablist">
             {CATEGORIES.map((c) => (
@@ -181,7 +182,7 @@ export default function App() {
         <div className="wrap visit-in">
           <div className="reveal">
             <p className="kicker">Visit</p>
-            <h2>골목 끝, 올리브 나무 옆</h2>
+            <h2>골목 끝, 올리브 나무 있는 집</h2>
             <p className="addr">{SHOP.address}<small>{SHOP.note}</small></p>
             <table className="hours">
               <tbody>

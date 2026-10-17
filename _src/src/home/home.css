@@ -52,7 +52,7 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spa
 /* 기기 화면 */
 .hero-stage { position: relative; z-index: 1; height: min(620px, 72svh); perspective: 1400px }
 .device { position: absolute; background: #0a1715; border: 1px solid rgba(244, 243, 235, .14); box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .7), 0 0 0 1px rgba(0, 0, 0, .3) inset; overflow: hidden }
-.device.pc { left: 0; right: 9%; top: 4%; aspect-ratio: 16 / 10.4; border-radius: 14px }
+.device.pc { left: 0; right: 5%; top: 6%; aspect-ratio: 16 / 10.4; border-radius: 14px }
 .device.phone { right: 0; bottom: 0; width: 27%; aspect-ratio: 9 / 19.2; border-radius: 30px; border-width: 5px; border-color: #1b2c29 }
 .device-bar { height: 30px; display: flex; align-items: center; gap: 6px; padding: 0 12px; background: #13221f }
 .device-bar i { width: 9px; height: 9px; border-radius: 50%; background: rgba(244, 243, 235, .18) }
@@ -139,3 +139,23 @@ em { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spa
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important }
 }
+
+/* 임팩트: 빛, 형광 밑줄, 커서 시연, 단계 표시 */
+.glow { position: absolute; z-index: 0; right: 8%; top: 18%; width: 620px; height: 620px; border-radius: 50%; background: radial-gradient(circle, rgba(215, 239, 129, .28) 0%, rgba(215, 239, 129, .08) 40%, transparent 70%); filter: blur(20px); pointer-events: none }
+.hl { position: relative; display: inline-block; z-index: 0 }
+.hl-mark { position: absolute; z-index: -1; left: -2%; right: -2%; bottom: .02em; height: .16em; background: rgba(215, 239, 129, .55); border-radius: 4px; transform-origin: 0 50% }
+.hero-stage { transform-style: preserve-3d }
+.cursor { position: absolute; left: 0; top: 0; z-index: 5; width: 22px; height: 22px; margin: -4px 0 0 -4px; opacity: 0; pointer-events: none; background: no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 2l16 9.5-7 1.6L9.6 20z' fill='%2307120f' stroke='%23fff' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E"); filter: drop-shadow(0 3px 6px rgba(0,0,0,.35)) }
+.cursor::after { content: ''; position: absolute; left: 0; top: 0; width: 34px; height: 34px; margin: -13px 0 0 -13px; border-radius: 50%; border: 2px solid var(--lime); opacity: 0; transform: scale(.3) }
+.cursor.tap::after { animation: tap .5s ease-out }
+@keyframes tap { 0% { opacity: 1; transform: scale(.3) } 100% { opacity: 0; transform: scale(1.4) } }
+.stage-cap { flex-direction: column; align-items: flex-start; gap: 10px }
+.stage-cap p { display: inline-flex; align-items: center; gap: 10px }
+.stage-steps { list-style: none; display: flex; gap: 6px; flex-wrap: wrap }
+.stage-steps li { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 5px; border-radius: 999px; border: 1px solid rgba(244, 243, 235, .16); font-family: var(--sans); font-size: 12px; color: rgba(244, 243, 235, .55); transition: background .35s, color .35s, transform .35s, box-shadow .35s }
+.stage-steps b { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font-size: 10px; background: rgba(244, 243, 235, .12) }
+.stage-steps li.past { color: rgba(244, 243, 235, .8) }
+.stage-steps li.past b { background: rgba(215, 239, 129, .35); color: var(--ink) }
+.stage-steps li.on { background: var(--lime); color: var(--ink); border-color: var(--lime); transform: translateY(-2px); box-shadow: 0 8px 22px -8px rgba(215, 239, 129, .6) }
+.stage-steps li.on b { background: var(--ink); color: var(--lime) }
+@media (max-width: 640px) { .glow { width: 360px; height: 360px; right: -20%; top: 50% } .stage-steps li { font-size: 11px } }
