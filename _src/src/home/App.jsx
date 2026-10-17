@@ -180,6 +180,138 @@ function Reel() {
   )
 }
 
+
+// 견본 목록: 큰 글자 줄. PC는 줄에 마우스를 올리면 그 견본 영상이 커서를 따라 뜨고, 휴대폰은 줄마다 영상이 들어 있다.
+function WorkList({ list, all, onOpen }) {
+  const box = useRef(null)
+  const flt = useRef(null)
+  const [hov, setHov] = useState(null)
+  const ready = all.filter((w) => w.ready)
+  useEffect(() => {
+    if (reduce || !window.matchMedia('(hover: hover) and (min-width: 981px)').matches) return
+    const fx = gsap.quickTo(flt.current, 'x', { duration: 0.6, ease: 'power3.out' })
+    const fy = gsap.quickTo(flt.current, 'y', { duration: 0.6, ease: 'power3.out' })
+    const move = (e) => { const r = box.current.getBoundingClientRect(); fx(e.clientX - r.left); fy(e.clientY - r.top) }
+    box.current.addEventListener('pointermove', move)
+    return () => box.current?.removeEventListener('pointermove', move)
+  }, [])
+  useEffect(() => {
+    // 떠 있는 영상은 보이는 것만 재생한다.
+    flt.current?.querySelectorAll('video').forEach((v) => (v.dataset.id === hov ? v.play().catch(() => {}) : v.pause()))
+  }, [hov])
+  useEffect(() => {
+    const io = new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting && !reduce ? e.target.play().catch(() => {}) : e.target.pause())), { threshold: 0.3 })
+    box.current.querySelectorAll('.wl-m video').forEach((v) => io.observe(v))
+    return () => io.disconnect()
+  }, [list])
+  return (
+    <div className="wl-box" ref={box} onPointerLeave={() => setHov(null)}>
+      <ul className={`wl ${hov ? 'hovering' : ''}`}>
+        {list.map((w) => {
+          const i = all.indexOf(w)
+          return (
+            <li key={w.id} className={`wl-row ${w.ready ? 'ready' : 'soon'} ${hov === w.id ? 'on' : ''}`} onPointerEnter={() => w.ready && setHov(w.id)}>
+              <button className="wl-hit" disabled={!w.ready} onClick={() => onOpen(w)} aria-label={`${w.name} 미리보기`} data-cursor={w.ready ? '보기' : ''} />
+              <span className="wl-n">0{i + 1}</span>
+              <div className="wl-main">
+                <h3 className="wl-name">{w.name}</h3>
+                <p className="wl-biz">{w.biz}{!w.ready && <b>제작 중</b>}</p>
+              </div>
+              {w.ready && <div className="wl-m"><video muted loop playsInline preload="none" poster={w.thumb}><source src={`/home/w_${w.id}.mp4`} type="video/mp4" /><source src={`/home/w_${w.id}.webm`} type="video/webm" /></video></div>}
+              <p className="wl-feat">{w.feat}</p>
+              <p className="wl-tech">{w.tech.join(' · ')}</p>
+              {w.ready ? <a className="wl-go" href={w.href} target="_blank" rel="noreferrer" aria-label={`${w.name} 새 창으로 열기`}>↗</a> : <span className="wl-go" aria-hidden>·</span>}
+            </li>
+          )
+        })}
+      </ul>
+      <div className={`wl-float ${hov ? 'on' : ''}`} ref={flt} aria-hidden>
+        {ready.map((w) => (
+          <video key={w.id} data-id={w.id} className={hov === w.id ? 'on' : ''} muted loop playsInline preload="metadata" poster={w.thumb}>
+            <source src={`/home/w_${w.id}.mp4`} type="video/mp4" /><source src={`/home/w_${w.id}.webm`} type="video/webm" />
+          </video>
+        ))}
+        <span className="wl-float-tag">눌러서 미리보기</span>
+      </div>
+    </div>
+  )
+}
+
+// 빨간 띠 글자: 계속 흐르고, 스크롤을 빨리 내리면 빨라지고 올리면 방향이 바뀐다.
+const BAND = ['예약 받고', '주문 받고', '견적 내 주고', '레벨 진단하고', '3D로 보여 주는']
+function Marquee() {
+  const track = useRef(null)
+  useEffect(() => {
+    if (reduce) return
+    const tw = gsap.to(track.current, { xPercent: -50, duration: 26, ease: 'none', repeat: -1 })
+    let dir = 1
+    const st = ScrollTrigger.create({
+      onUpdate: (self) => {
+        const v = self.getVelocity()
+        if (self.direction !== dir) { dir = self.direction; gsap.to(tw, { timeScale: dir, duration: 0.6 }) }
+        gsap.to(tw, { timeScale: dir * Math.min(5, 1 + Math.abs(v) / 900), duration: 0.25, overwrite: true, onComplete: () => gsap.to(tw, { timeScale: dir, duration: 1.2 }) })
+      },
+    })
+    return () => { tw.kill(); st.kill() }
+  }, [])
+  const row = BAND.map((t) => <span key={t}>{t}<i aria-hidden>✱</i></span>)
+  return (
+    <div className="band" aria-label={BAND.join(', ') + ' 홈페이지'}>
+      <div className="band-track" ref={track} aria-hidden>{row}{row}</div>
+    </div>
+  )
+}
+
+// PC 전용 커서: 빨간 점과 고리. 누를 수 있는 곳에선 고리가 커지고, 견본 줄 위에선 "보기"가 뜬다.
+function Cursor() {
+  const dot = useRef(null)
+  const ring = useRef(null)
+  const [label, setLabel] = useState('')
+  const [mode, setMode] = useState('')
+  useEffect(() => {
+    if (reduce || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
+    document.documentElement.classList.add('has-cur')
+    const dx = gsap.quickTo(dot.current, 'x', { duration: 0.08 }), dy = gsap.quickTo(dot.current, 'y', { duration: 0.08 })
+    const rx = gsap.quickTo(ring.current, 'x', { duration: 0.45, ease: 'power3.out' }), ry = gsap.quickTo(ring.current, 'y', { duration: 0.45, ease: 'power3.out' })
+    const move = (e) => {
+      dx(e.clientX); dy(e.clientY); rx(e.clientX); ry(e.clientY)
+      const t = e.target
+      const lab = t.closest?.('[data-cursor]')?.dataset.cursor
+      if (lab) { setMode('label'); setLabel(lab) }
+      else if (t.closest?.('input, textarea, select, iframe')) { setMode('hide'); setLabel('') }
+      else if (t.closest?.('a, button, label, [role=button]')) { setMode('link'); setLabel('') }
+      else { setMode(''); setLabel('') }
+    }
+    const out = () => setMode('hide')
+    window.addEventListener('pointermove', move)
+    document.addEventListener('pointerleave', out)
+    return () => { window.removeEventListener('pointermove', move); document.removeEventListener('pointerleave', out); document.documentElement.classList.remove('has-cur') }
+  }, [])
+  return (
+    <div className={`cur ${mode}`} aria-hidden>
+      <i className="cur-dot" ref={dot} />
+      <i className="cur-ring" ref={ring}><b>{label}</b></i>
+    </div>
+  )
+}
+
+// 끌려오는 버튼: 마우스가 버튼 위에 있으면 버튼이 커서 쪽으로 살짝 따라온다(PC).
+function useMagnet(root) {
+  useEffect(() => {
+    if (reduce || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
+    const els = root.current.querySelectorAll('.btn, .nav-cta, .kh-chap a')
+    const offs = []
+    els.forEach((el) => {
+      const mx = gsap.quickTo(el, 'x', { duration: 0.4, ease: 'power3.out' }), my = gsap.quickTo(el, 'y', { duration: 0.4, ease: 'power3.out' })
+      const mv = (e) => { const r = el.getBoundingClientRect(); mx((e.clientX - r.left - r.width / 2) * 0.28); my((e.clientY - r.top - r.height / 2) * 0.4) }
+      const lv = () => gsap.to(el, { x: 0, y: 0, duration: 0.9, ease: 'elastic.out(1, .4)' })
+      el.addEventListener('pointermove', mv); el.addEventListener('pointerleave', lv)
+      offs.push(() => { el.removeEventListener('pointermove', mv); el.removeEventListener('pointerleave', lv) })
+    })
+    return () => offs.forEach((f) => f())
+  }, [])
+}
+
 function Device({ kind, src, label, onStep }) {
   const ref = useRef(null)
   const box = useRef(null)
@@ -221,6 +353,7 @@ export default function App({ fromTx }) {
   const { tag, setTag, TAGS, list } = useFilter(WORKS)
   const [hideCta, setHideCta] = useState(false)
   const [ready, setReady] = useState(false)
+  useMagnet(root)
   useEffect(() => {
     // 견적·상담 칸이 보이는 동안엔 휴대폰 하단 고정 버튼을 숨겨 입력 버튼을 가리지 않게 한다.
     const seen = new Set()
@@ -235,6 +368,8 @@ export default function App({ fromTx }) {
     window.__lenis = lenis
     lenis.on('scroll', ScrollTrigger.update)
     const raf = (t) => lenis.raf(t * 1000)
+    // 제목 글꼴이 늦게 들어오면 높이가 바뀌므로 그때 스크롤 위치를 다시 잰다.
+    document.fonts?.ready.then(() => ScrollTrigger.refresh())
     gsap.ticker.add(raf); gsap.ticker.lagSmoothing(0)
     return () => { gsap.ticker.remove(raf); lenis.destroy(); window.__lenis = null }
   }, [])
@@ -264,7 +399,7 @@ export default function App({ fromTx }) {
       gsap.from('.device.pc', { y: 120, rotateY: -24, rotateX: 12, scale: 0.88, opacity: 0, duration: 1.5, ease: 'expo.out', scrollTrigger: { trigger: '.live', start: 'top 70%' } })
       gsap.from('.device.phone', { y: 200, rotate: 10, opacity: 0, duration: 1.4, ease: 'expo.out', delay: 0.25, scrollTrigger: { trigger: '.live', start: 'top 70%' } })
       gsap.utils.toArray('.rv').forEach((el) => gsap.from(el, { y: 36, opacity: 0, duration: 0.85, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 86%' } }))
-      gsap.from('.w-card', { y: 40, opacity: 0, duration: 0.7, stagger: 0.07, ease: 'power3.out', scrollTrigger: { trigger: '.w-grid', start: 'top 82%' } })
+      gsap.from('.wl-row', { y: 50, opacity: 0, duration: 0.8, stagger: 0.06, ease: 'power3.out', scrollTrigger: { trigger: '.wl', start: 'top 85%' } })
     }, root)
     // 마우스를 따라 빨간 빛이 움직이고, 아래 실시간 견본 화면은 살짝 기운다(PC만).
     const el = stage.current
@@ -291,6 +426,7 @@ export default function App({ fromTx }) {
       </header>
 
       <Intro skip={fromTx} onDone={() => setReady(true)} />
+      <Cursor />
       <section className="kh">
         <div className="glow" aria-hidden />
         <div className="kh-top">
@@ -327,6 +463,8 @@ export default function App({ fromTx }) {
         </div>
       </section>
 
+      <Marquee />
+
       <section className="proof">
         <div className="wrap proof-in">
           {[['실제로 작동', '예약, 주문, 견적 기능을 계약 전에 직접 써 보세요'], ['PC·휴대폰', '손님 대부분은 휴대폰으로 들어와요. 두 화면 다 확인하세요'], ['코드 원본 전달', '코드를 통째로 드려요. 저희가 없어져도 홈페이지는 그대로예요']].map(([t, d]) => (
@@ -343,26 +481,7 @@ export default function App({ fromTx }) {
             <p>업종마다 손님이 실제로 쓰는 기능을 하나씩 넣었어요. 견본 속 가게는 모두 가상 가게이고, 나머지 견본도 차례로 열립니다.</p>
           </div>
           <div className="w-filter rv">{TAGS.map((t) => <button key={t} className={tag === t ? 'on' : ''} onClick={() => setTag(t)}>{t}</button>)}</div>
-          <div className="w-grid">
-            {list.map((w) => {
-              const i = WORKS.indexOf(w)
-              return (
-                <div key={w.id} className={`w-card ${w.ready ? 'ready' : 'soon'}`}>
-                  <button className="w-thumb" disabled={!w.ready} onClick={() => setPv(w)} aria-label={`${w.name} 미리보기`}>
-                    {w.ready ? <img src={w.thumb} alt="" /> : <span className="w-num">0{i + 1}</span>}
-                    <span className={`w-state ${w.ready ? 'on' : ''}`}>{w.ready ? '써 보기 가능' : '제작 중'}</span>
-                    {w.ready && <span className="w-play">PC·휴대폰으로 미리보기</span>}
-                  </button>
-                  <div className="w-body">
-                    <p className="w-biz">{w.biz}</p>
-                    <h3>{w.name}</h3>
-                    <p className="w-feat">{w.feat}</p>
-                    <div className="w-foot"><p className="w-tech">{w.tech.map((t) => <span key={t}>{t}</span>)}</p>{w.ready && <a href={w.href} target="_blank" rel="noreferrer">새 창 ↗</a>}</div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+          <WorkList list={list} all={WORKS} onOpen={setPv} />
         </div>
       </section>
 
