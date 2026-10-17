@@ -1,0 +1,149 @@
+/* 오롯 인테리어 — 석회·오크, 명조 제목 */
+:root {
+  --bg: #f3efe8; --paper: #fbf9f5; --ink: #22201c; --mute: #6e675e; --line: #dcd5c9;
+  --oak: #a87a4a; --dark: #1d1b18; --dark2: #2a2622;
+  --serif: 'Noto Serif KR', serif; --sans: 'Noto Sans KR', system-ui, sans-serif; --disp: 'Italiana', serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0 }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100% }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.7; overflow-x: hidden; -webkit-font-smoothing: antialiased }
+img { display: block; max-width: 100%; object-fit: cover }
+button, input { font: inherit; color: inherit }
+button { background: none; border: 0; cursor: pointer }
+a { color: inherit; text-decoration: none }
+h1, h2, h3 { font-family: var(--serif); font-weight: 600; letter-spacing: -.03em; line-height: 1.3; word-break: keep-all; text-wrap: balance }
+p { word-break: keep-all }
+.i-wrap { width: min(1240px, 100% - 48px); margin-inline: auto }
+.i-kick { font-family: var(--disp); font-size: 18px; letter-spacing: .14em; text-transform: uppercase; color: var(--oak) }
+.tiny { font-size: 12px; color: var(--mute); margin-top: 12px }
+
+.i-demo { background: var(--dark); color: #cfc6b8; font-size: 12px; text-align: center; padding: 7px 16px }
+.i-demo b { color: #fff; letter-spacing: .08em }
+.i-top { position: absolute; z-index: 30; left: 0; right: 0; top: 31px; display: flex; align-items: center; gap: 32px; padding: 22px max(24px, calc((100% - 1240px) / 2)); color: #fff }
+.i-logo { font-family: var(--disp); font-size: 26px; letter-spacing: .2em; display: flex; align-items: baseline; gap: 12px }
+.i-logo span { font-family: var(--sans); font-size: 12px; letter-spacing: 0; opacity: .8 }
+.i-top nav { display: flex; gap: 28px; margin-left: auto; font-size: 14px; opacity: .9 }
+.i-cta { padding: 11px 20px; border: 1px solid rgba(255, 255, 255, .6); font-size: 14px; transition: background .25s, color .25s }
+.i-cta:hover { background: #fff; color: var(--ink) }
+
+.i-hero { position: relative; height: min(100svh, 940px); min-height: 600px; overflow: hidden; color: #fff; display: flex; align-items: flex-end }
+.i-hero-img { position: absolute; inset: -5% 0 0; width: 100%; height: 110% }
+.i-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20, 16, 12, .45) 0%, rgba(20, 16, 12, 0) 30%, rgba(20, 16, 12, .1) 55%, rgba(20, 16, 12, .7) 100%) }
+.i-hero-in { position: relative; z-index: 2; width: min(1240px, 100% - 48px); margin: 0 auto; padding-bottom: clamp(48px, 9vh, 96px) }
+.i-hero .i-kick { color: #e8d4b6 }
+.i-hero h1 { font-size: clamp(40px, 6.4vw, 92px); font-weight: 400; margin: 10px 0 22px }
+.m { display: block; overflow: hidden; padding-bottom: .06em }
+.ln { display: block }
+.i-lede { max-width: 480px; font-size: 17px; opacity: .88 }
+
+.i-sec { padding: clamp(80px, 11vw, 140px) 0 }
+.i-head { margin-bottom: 36px; display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 8px 40px }
+.i-head .i-kick { grid-column: 1 / -1 }
+.i-head h2, .room-side h2, .calc-in h2 { font-size: clamp(30px, 3.8vw, 52px) }
+.i-head > p:last-child { color: var(--mute) }
+
+/* 전후 비교 */
+.ba { position: relative; aspect-ratio: 16 / 9; overflow: hidden; user-select: none; touch-action: pan-y; cursor: ew-resize }
+.ba > img, .ba-before img { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none }
+.ba-before { position: absolute; inset: 0 }
+.ba-tag { position: absolute; top: 18px; padding: 6px 12px; background: rgba(20, 16, 12, .55); color: #fff; font-size: 13px; backdrop-filter: blur(6px) }
+.ba-tag.l { left: 18px } .ba-tag.r { right: 18px }
+.ba-bar { position: absolute; top: 0; bottom: 0; width: 2px; background: #fff; transform: translateX(-1px); pointer-events: none }
+.ba-bar i { position: absolute; top: 50%; left: 50%; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; background: #fff; color: var(--ink); display: grid; place-items: center; font-style: normal; font-weight: 700; box-shadow: 0 10px 30px rgba(0, 0, 0, .3) }
+.ba-range { position: absolute; inset: auto 0 0; width: 100%; opacity: 0; height: 1px; pointer-events: none }
+
+/* 3D */
+.dark { background: var(--dark); color: #efe8dd }
+.room-in { display: grid; grid-template-columns: .8fr 1.4fr; gap: clamp(28px, 4vw, 64px); align-items: center }
+.room-side > p:not(.i-kick):not(.pick-l) { color: #b8afa2; margin: 14px 0 6px }
+.pick-l { font-size: 13px; font-weight: 700; margin: 22px 0 10px; letter-spacing: .02em }
+.swatches { display: flex; flex-wrap: wrap; gap: 8px }
+.swatches button { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 8px 8px; border: 1px solid rgba(239, 232, 221, .2); font-size: 14px; transition: border-color .2s, background .2s }
+.swatches button i { width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .3) }
+.swatches button.on { border-color: #e8d4b6; background: rgba(232, 212, 182, .1) }
+.room-stage { position: relative; aspect-ratio: 4 / 3; background: #efe9df; overflow: hidden }
+.room3d { position: absolute; inset: 0; cursor: grab }
+.room3d:active { cursor: grabbing }
+.room-load { position: absolute; inset: 0; display: grid; place-items: center; color: var(--mute) }
+.drag-hint { position: absolute; left: 16px; bottom: 14px; padding: 6px 12px; background: rgba(29, 27, 24, .7); color: #fff; font-size: 12px; pointer-events: none }
+
+/* 견적 */
+.calc-in { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 80px); align-items: start }
+.py { display: grid; grid-template-columns: 1fr auto; align-items: baseline; margin-top: 30px; gap: 8px }
+.py span { font-weight: 700; font-size: 14px }
+.py b { font-family: var(--serif); font-size: 32px; font-weight: 600 }
+.py input { grid-column: 1 / -1; width: 100%; accent-color: var(--oak); height: 28px }
+.scope { display: flex; flex-wrap: wrap; gap: 8px }
+.scope button { padding: 10px 16px; border: 1px solid var(--line); background: var(--paper); font-size: 14px; transition: all .2s }
+.scope button.on { background: var(--ink); color: #fff; border-color: var(--ink) }
+.seg { display: inline-flex; border: 1px solid var(--line) }
+.seg button { padding: 10px 22px; font-size: 14px }
+.seg button.on { background: var(--ink); color: #fff }
+.est { background: var(--paper); border: 1px solid var(--line); padding: 30px; position: sticky; top: 24px }
+.est-t { font-size: 13px; color: var(--mute) }
+.est-n { font-family: var(--serif); font-size: clamp(26px, 2.8vw, 38px); font-weight: 600; letter-spacing: -.02em; margin: 4px 0 }
+.est-d { color: var(--oak); font-weight: 500 }
+.est ul { list-style: none; margin: 18px 0; border-top: 1px solid var(--line) }
+.est li { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px }
+.cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px }
+.cf input { padding: 13px; border: 1px solid var(--line); background: #fff; font-size: 16px; outline: none; min-width: 0; width: 100% }
+.cf input:focus { border-color: var(--oak) }
+.i-btn { display: block; width: 100%; padding: 15px; background: var(--ink); color: #fff; font-weight: 600; transition: background .2s }
+.i-btn:hover { background: #3a342c }
+.err { display: block; font-style: normal; color: #b4472e; font-size: 13px; margin-bottom: 8px }
+
+/* 사례 */
+.works-grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 18px }
+.w-item div { overflow: hidden; aspect-ratio: 3 / 4 }
+.w-item:first-child div { aspect-ratio: auto; height: 100% }
+.w-item { display: flex; flex-direction: column }
+.w-item:first-child div { flex: 1; min-height: 0 }
+.w-item img { width: 100%; height: 100%; transition: transform 1s cubic-bezier(.2, .7, .2, 1) }
+.w-item:hover img { transform: scale(1.05) }
+.w-item figcaption { padding: 14px 0; display: flex; flex-direction: column }
+.w-item b { font-family: var(--serif); font-size: 18px; font-weight: 600 }
+.w-item span { color: var(--mute); font-size: 14px }
+.mat { margin-top: 40px; display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: center }
+.mat img { aspect-ratio: 16 / 9; width: 100% }
+.mat figcaption { font-family: var(--serif); font-size: clamp(20px, 2vw, 28px) }
+
+.i-foot { padding: 34px 0 60px; border-top: 1px solid var(--line); font-size: 13px; color: var(--mute) }
+.i-foot a { color: var(--ink); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; margin-left: 6px }
+
+.i-overlay { position: fixed; inset: 0; z-index: 50; background: rgba(20, 16, 12, .5); display: grid; place-items: center; padding: 20px }
+.i-done { width: min(440px, 100%); background: var(--paper); padding: 32px }
+.i-done h3 { font-size: 22px; margin: 6px 0 10px }
+.i-done > p:not(.i-kick):not(.tiny) { color: var(--mute); margin-bottom: 6px }
+.i-done .i-btn { margin-top: 18px }
+
+@media (max-width: 900px) {
+  .i-top nav { display: none }
+  .i-cta { margin-left: auto }
+  .room-in, .calc-in { grid-template-columns: 1fr }
+  .est { position: static }
+  .works-grid { grid-template-columns: 1fr 1fr }
+  .w-item:first-child { grid-column: 1 / -1 }
+  .w-item:first-child div { aspect-ratio: 16 / 10; flex: none }
+  .mat { grid-template-columns: 1fr }
+  .i-head { grid-template-columns: 1fr }
+}
+@media (max-width: 600px) {
+  .i-wrap, .i-hero-in { width: calc(100% - 32px) }
+  .i-top { padding: 16px; gap: 12px }
+  .i-logo { font-size: 22px } .i-logo span { display: none }
+  .i-cta { padding: 9px 14px; font-size: 13px }
+  .i-hero h1 { font-size: 38px }
+  .i-lede { font-size: 15px }
+  .ba { aspect-ratio: 4 / 3 }
+  .room-stage { aspect-ratio: 1 / 1 }
+  .est { padding: 22px }
+  .cf-row { grid-template-columns: 1fr }
+  .works-grid { grid-template-columns: 1fr }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important } }
+.i-hero .i-kick { font-family: var(--sans); font-size: 12px; letter-spacing: .3em; font-weight: 500; text-shadow: 0 1px 8px rgba(0, 0, 0, .4) }
+.i-hero h1, .i-lede { text-shadow: 0 2px 20px rgba(0, 0, 0, .25) }
+.i-overlay { grid-template-columns: minmax(0, 440px); justify-content: center }
+.i-done { width: 100% }
+.w-item, .mat, .mat img { min-width: 0 }
+@media (max-width: 600px) { .works-grid { grid-template-columns: minmax(0, 1fr) } .mat { grid-template-columns: minmax(0, 1fr) } }

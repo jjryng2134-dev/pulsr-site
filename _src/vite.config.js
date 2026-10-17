@@ -12,6 +12,7 @@ export default defineConfig({
         home: resolve(__dirname, 'index.html'),
         cafe: resolve(__dirname, 'work/cafe/index.html'),
         clinic: resolve(__dirname, 'work/clinic/index.html'),
+        interior: resolve(__dirname, 'work/interior/index.html'),
       },
     },
   },

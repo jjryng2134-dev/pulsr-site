@@ -11,7 +11,7 @@ const OFFER = { price: '확정 전', days: '확정 전', upkeep: '0원', tentati
 const WORKS = [
   { id: 'cafe', name: '온결 커피', biz: '카페·베이커리', feat: '메뉴 담기 → 픽업 시간 → 주문서', tech: ['React', 'GSAP'], href: '/work/cafe/', ready: true, thumb: '/work/cafe/img/cafe_hero.jpg' },
   { id: 'clinic', name: '맑은결 피부과', biz: '피부과·치과', feat: '남은 자리 보이는 예약 달력 → 알림톡 미리보기', tech: ['React', 'GSAP'], href: '/work/clinic/', ready: true, thumb: '/work/clinic/img/clinic_hero.jpg' },
-  { id: 'interior', name: '인테리어', biz: '시공·리모델링', feat: '3D 방 돌려 보기, 전후 비교, 평수 견적', tech: ['Three.js', 'React'] },
+  { id: 'interior', name: '오롯 인테리어', biz: '시공·리모델링', feat: '3D 방 재질 바꾸기, 전후 비교, 평수 견적', tech: ['Three.js', 'React', 'GSAP'], href: '/work/interior/', ready: true, thumb: '/work/interior/img/int_hero.jpg' },
   { id: 'academy', name: '학원 상담', biz: '학원·교습소', feat: '3분 레벨 진단 → 상담 신청', tech: ['React'] },
   { id: 'detail', name: '상품 상세', biz: '쇼핑 상세페이지', feat: '스크롤 연출, 옵션·가격 계산', tech: ['GSAP', 'React'] },
   { id: 'class', name: '원데이 클래스', biz: '공방·클래스', feat: '남은 자리 있는 날짜로 예약', tech: ['React'] },
