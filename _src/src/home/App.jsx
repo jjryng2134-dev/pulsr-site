@@ -197,17 +197,18 @@ function Reel() {
 
 
 // 제목 첫 줄 끝에 박힌 작은 카페 견본 영상. 페이지가 다 뜬 뒤에 받는다.
-function InlineClip() {
+function InlineClip({ name, href, cls = '' }) {
   const v = useRef(null)
   useEffect(() => {
     if (reduce) return
-    const go = () => v.current?.play().catch(() => {})
+    // 화면에 안 보이는 칸(휴대폰에서 숨긴 영상)은 받지 않는다.
+    const go = () => v.current?.offsetParent && v.current.play().catch(() => {})
     if (document.readyState === 'complete') go(); else window.addEventListener('load', go, { once: true })
     return () => window.removeEventListener('load', go)
   }, [])
   return (
-    <a className="kh-inl" href="/work/cafe/" tabIndex={-1} data-cursor="써 보기">
-      <video ref={v} muted loop playsInline preload="none" poster="/home/w_cafe_s.jpg"><source src="/home/w_cafe.mp4" type="video/mp4" /><source src="/home/w_cafe.webm" type="video/webm" /></video>
+    <a className={`kh-inl ${cls}`} href={href} tabIndex={-1} data-cursor="써 보기">
+      <video ref={v} muted loop playsInline preload="none" poster={`/home/${name}_s.jpg`}><source src={`/home/${name}.mp4`} type="video/mp4" /><source src={`/home/${name}.webm`} type="video/webm" /></video>
     </a>
   )
 }
@@ -420,12 +421,14 @@ export default function App({ fromTx }) {
   const [ready, setReady] = useState(false)
   const [at, setAt] = useState(-1)
   const [top, setTop] = useState(true)
+  // 휴대폰·태블릿은 견본 영상을 제목 바로 아래(첫 화면 안)에 둔다. PC는 아래에서 화면 전체로 커지는 연출.
+  const [mob] = useState(() => window.matchMedia('(max-width: 980px)').matches)
   useMagnet(root)
   useEffect(() => {
     // 견적·상담 칸이 보이는 동안엔 휴대폰 하단 고정 버튼을 숨겨 입력 버튼을 가리지 않게 한다.
     const seen = new Set()
     const io = new IntersectionObserver((es) => { es.forEach((e) => (e.isIntersecting ? seen.add(e.target.id) : seen.delete(e.target.id))); setHideCta(seen.size > 0) })
-    ;['estimate', 'contact'].forEach((id) => io.observe(document.getElementById(id)))
+    ;['hero-cta', 'estimate', 'contact'].forEach((id) => io.observe(document.getElementById(id)))
     return () => io.disconnect()
   }, [])
   useEffect(() => {
@@ -508,21 +511,22 @@ export default function App({ fromTx }) {
           <p className="kh-meta k-fade">견본 5종 · 계약 전에 직접 눌러 보기</p>
         </div>
         <h1 className="kh-title" aria-label="구경만 하는 홈페이지 말고, 써 보는 홈페이지.">
-          <span className="kl l1" aria-hidden><Chars t="구경만 하는" /><InlineClip /></span>
+          <span className="kl l1" aria-hidden><Chars t="구경만 하는" /><InlineClip name="w_cafe" href="/work/cafe/" cls="wide" /></span>
           <span className="kl l2" aria-hidden><Chars t="홈페이지 말고," /></span>
-          <span className="kl l3" aria-hidden><Chars t="써 보는" cls="red" /><Chars t=" 홈페이지." /></span>
+          <span className="kl l3" aria-hidden><Chars t="써 보는" cls="red" /><Chars t=" 홈페이지." /><InlineClip name="w_detail" href="/work/detail/" cls="d-only" /></span>
         </h1>
+        {mob && <div className="kh-mreel"><Reel /></div>}
         <div className="kh-foot">
           <p className="lede k-fade">주문 받고, 예약 받고, 견적 내 주는 화면을 미리 써 보실 수 있어요. 마음에 드는 기능을 고르시면 사장님 가게에 맞춰 그대로 만들어 드립니다.</p>
-          <div className="cta k-fade">
+          <div className="cta k-fade" id="hero-cta">
             <a className="btn lime" href="/work/cafe/">카페 견본 직접 써 보기 <span aria-hidden>↗</span></a>
             <a className="btn line" href="#works">견본 전체 보기</a>
           </div>
         </div>
       </section>
-      <section className="kh-stage" aria-label="견본 사용 장면 영상">
+      {!mob && <section className="kh-stage" aria-label="견본 사용 장면 영상">
         <Reel />
-      </section>
+      </section>}
 
       <div data-ch>
         <Chapter i={0} />

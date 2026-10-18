@@ -535,3 +535,12 @@ html.has-cur input, html.has-cur textarea, html.has-cur select { cursor: auto }
   .chp-t { font-size: 52px }
   .chp-d { font-size: 15px }
 }
+.kh-inl.wide { width: 2.1em }
+.kh-inl.wide:hover { width: 2.6em }
+.kh-mreel { position: relative; z-index: 2; margin-top: 22px }
+.kh-mreel .kh-reel { width: 100%; height: auto; aspect-ratio: 16 / 10; border-radius: 18px }
+@media (max-width: 980px) {
+  .kh-inl.d-only { display: none }
+  .kh-inl.wide { width: 1.3em }
+  .kh-inl.wide:hover { width: 1.3em }
+}

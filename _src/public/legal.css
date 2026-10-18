@@ -1,0 +1,94 @@
+/* 법적 고지(이용약관·개인정보처리방침) 전용 스타일 — 옛 style.css를 블랙·레드 브랜드 색으로 바꾼 것 (10-18)
+   재사용: company-preview-src/app/store/store.css 의 색 토큰(paper/ink/lime/deep/mute)과
+   제목 규칙(word-break:keep-all; text-wrap:balance), 알약 버튼·카드 테두리 구성.
+   외부 글꼴·스크립트 없음(시스템 글꼴). 모바일 375px 우선. */
+:root{
+  --paper:#f7f7f2; --ink:#0a0a0a; --lime:#f51c20; --deep:#d4141a; --mute:#5c5c58; --line:#0a0a0a1f; --card:#ffffff;
+  --font:"Pretendard","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{background:var(--paper);-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--font);background:var(--paper);color:var(--ink);line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+a:focus-visible{outline:3px solid #d4141a;outline-offset:3px}
+h1,h2,h3{word-break:keep-all;text-wrap:balance;font-weight:900;letter-spacing:-.04em;margin:0;line-height:1.15}
+p,li{word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+
+/* 머리 */
+.head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 16px;max-width:1080px;margin:0 auto}
+.logo{font-weight:900;font-size:22px;letter-spacing:.02em;text-decoration:none}
+.logo b{color:var(--deep)}
+.pill{display:inline-flex;align-items:center;min-height:42px;padding:0 18px;border-radius:999px;background:var(--lime);color:#fff;font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap}
+
+/* 첫 화면 */
+.hero{padding-top:28px;padding-bottom:52px}
+.eyebrow{display:inline-block;margin:0 0 16px;padding:5px 14px;border-radius:999px;border:1.5px solid var(--ink);font-size:13px;font-weight:700}
+.hero h1{font-size:clamp(34px,9.6vw,76px)}
+.hero mark{background:linear-gradient(transparent 58%,var(--lime) 58%);color:inherit;padding:0 4px;margin:0 -4px}
+.lede{margin:20px 0 26px;font-size:17px;color:var(--mute);max-width:640px}
+.cta{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:10px;min-height:56px;padding:0 26px;border-radius:999px;background:var(--ink);color:var(--lime);font-weight:900;font-size:16px;text-decoration:none}
+.btn:hover{transform:translateY(-2px)}
+.link{font-weight:700;border-bottom:2px solid var(--ink);text-decoration:none;padding-bottom:1px}
+.micro{margin:14px 0 0;font-size:13px;color:var(--mute)}
+
+/* 구역 */
+.sec{padding-top:56px;padding-bottom:8px}
+.sec h2{font-size:clamp(28px,7.4vw,52px);margin-bottom:22px}
+.sub{margin:-6px 0 26px;color:var(--mute);max-width:640px;font-size:15px}
+
+/* 서비스 카드 */
+.svc{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.svc>li{padding:24px;border:1.5px solid var(--ink);border-radius:24px;background:var(--card);display:grid;gap:8px}
+.svc .no{font-weight:900;font-size:13px;color:var(--deep);letter-spacing:.08em}
+.svc h3{font-size:22px}
+.svc p{margin:0;color:var(--mute);font-size:15px}
+.svc ul{margin:4px 0 0;padding-left:18px;font-size:14.5px}
+
+/* 작업 예시 자리 */
+.works{display:grid;gap:12px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.ph{aspect-ratio:4/5;border-radius:18px;background:#d9d9d4;border:1.5px dashed #9a9a92;display:grid;place-items:center;text-align:center;padding:10px;color:#55554f;font-size:13px;font-weight:700}
+.ph small{display:block;font-weight:500;margin-top:4px}
+
+/* 진행 순서 */
+.steps{list-style:none;margin:0;padding:0;border-top:2px solid var(--ink)}
+.steps li{display:grid;grid-template-columns:52px 1fr;gap:2px 12px;padding:18px 0;border-bottom:1px solid var(--line)}
+.steps i{font-style:normal;font-weight:900;font-size:32px;color:var(--deep);line-height:1;grid-row:span 2}
+.steps b{font-size:18px;letter-spacing:-.02em}
+.steps span{color:var(--mute);font-size:14.5px}
+
+/* 문의 */
+.contact{margin-top:56px;background:var(--ink);color:var(--paper);padding:56px 0 60px}
+.contact h2{color:var(--paper);font-size:clamp(28px,7.4vw,52px);margin-bottom:22px}
+.contact .sub{color:#c8d3cd}
+.mailbox{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:clamp(22px,6.4vw,40px);font-weight:900;color:var(--lime);text-decoration:none;border-bottom:2px solid var(--lime);word-break:break-all}
+.contact ul{margin:22px 0 0;padding-left:18px;color:#c8d3cd;font-size:14.5px}
+
+/* 문서(약관·처리방침) */
+.doc{padding-top:24px;padding-bottom:40px}
+.doc h1{font-size:clamp(28px,7vw,44px);margin:8px 0 10px}
+.doc h2{font-size:19px;margin:34px 0 10px;letter-spacing:-.02em}
+.doc p,.doc li{font-size:15px}
+.doc ol,.doc ul{padding-left:20px}
+.draft{margin:14px 0 20px;padding:14px 16px;border-radius:14px;background:#fff6c9;border:1.5px solid #c9a400;font-size:14px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px;background:var(--card)}
+.tbl th,.tbl td{border:1px solid var(--line);padding:10px;text-align:left;vertical-align:top;overflow-wrap:anywhere}
+.tbl tbody th{width:34%}
+.tbl th{background:#ecebe2}
+.todo{background:#ffe2d6;padding:0 4px;border-radius:4px;font-weight:700}
+
+/* 하단 사업자 정보 */
+.foot{border-top:1px solid var(--line);padding-top:28px;padding-bottom:40px;font-size:13px;color:var(--mute)}
+.foot nav{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:14px}
+.foot nav a{font-weight:700;color:var(--ink)}
+.foot dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:0}
+.foot dt{font-weight:700}
+.foot dd{margin:0;overflow-wrap:anywhere}
+
+@media (min-width:760px){
+  .svc{grid-template-columns:repeat(3,1fr)}
+  .works{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .head,.wrap{padding-left:24px;padding-right:24px}
+}
+@media (prefers-reduced-motion:reduce){.btn:hover{transform:none}}
