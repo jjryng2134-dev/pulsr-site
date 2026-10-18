@@ -4,6 +4,10 @@ import { resolve } from 'path'
 export default defineConfig({
   plugins: [react()],
   base: '/',
+  // React 대신 같은 사용법의 Preact를 써서 모든 페이지가 받는 공통 스크립트를 줄인다(압축 기준 약 40KB).
+  resolve: {
+    alias: { react: 'preact/compat', 'react-dom/client': 'preact/compat/client', 'react-dom': 'preact/compat', 'react/jsx-runtime': 'preact/jsx-runtime' },
+  },
   build: {
     outDir: 'dist',
     emptyOutDir: true,

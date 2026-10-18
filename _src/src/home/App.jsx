@@ -327,13 +327,16 @@ function Cursor() {
   const dot = useRef(null)
   const ring = useRef(null)
   const [label, setLabel] = useState('')
-  const [mode, setMode] = useState('')
+  // 마우스를 움직이기 전엔 숨긴다(안 그러면 화면 왼쪽 위 모서리에 빨간 원이 걸려 있음).
+  const [mode, setMode] = useState('hide')
   useEffect(() => {
     if (reduce || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
     document.documentElement.classList.add('has-cur')
     const dx = gsap.quickTo(dot.current, 'x', { duration: 0.08 }), dy = gsap.quickTo(dot.current, 'y', { duration: 0.08 })
     const rx = gsap.quickTo(ring.current, 'x', { duration: 0.45, ease: 'power3.out' }), ry = gsap.quickTo(ring.current, 'y', { duration: 0.45, ease: 'power3.out' })
+    let first = true
     const move = (e) => {
+      if (first) { first = false; gsap.set([dot.current, ring.current], { x: e.clientX, y: e.clientY }) }
       dx(e.clientX); dy(e.clientY); rx(e.clientX); ry(e.clientY)
       const t = e.target
       const lab = t.closest?.('[data-cursor]')?.dataset.cursor
@@ -421,7 +424,7 @@ export default function App({ fromTx }) {
   const [ready, setReady] = useState(false)
   const [at, setAt] = useState(-1)
   const [top, setTop] = useState(true)
-  // 휴대폰·태블릿은 견본 영상을 제목 바로 아래(첫 화면 안)에 둔다. PC는 아래에서 화면 전체로 커지는 연출.
+  // 휴대폰·태블릿은 견본 영상을 제목 바로 아래(첫 화면 안)에 둔다. PC는 제목을 두 줄로 줄여 영상 창이 첫 화면에 크게 걸리고, 내리면 화면 전체로 커진다.
   const [mob] = useState(() => window.matchMedia('(max-width: 980px)').matches)
   useMagnet(root)
   useEffect(() => {
@@ -430,6 +433,13 @@ export default function App({ fromTx }) {
     const io = new IntersectionObserver((es) => { es.forEach((e) => (e.isIntersecting ? seen.add(e.target.id) : seen.delete(e.target.id))); setHideCta(seen.size > 0) })
     ;['hero-cta', 'estimate', 'contact'].forEach((id) => io.observe(document.getElementById(id)))
     return () => io.disconnect()
+  }, [])
+  useEffect(() => {
+    // 맨 위 80px 안에서만 메뉴 바탕을 투명하게. 움직임 줄이기 설정과 상관없이 돈다.
+    // (전에는 ScrollTrigger로 해서 페이지 맨 끝에서 다시 투명해져 로고가 아래 글자와 겹쳤다.)
+    const onScroll = () => setTop(window.scrollY < 80)
+    window.addEventListener('scroll', onScroll, { passive: true }); onScroll()
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
   useEffect(() => {
     // 부드러운 스크롤(Lenis). 휴대폰 터치는 기본 스크롤 그대로 둔다.
@@ -464,12 +474,11 @@ export default function App({ fromTx }) {
           .fromTo('.kh-chap', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.25 }, 0.7)
           .to({}, { duration: 0.3 })
         // 큰 글자 세 줄이 스크롤에 따라 서로 다른 방향으로 밀려난다.
-        ;[['.l1', -10], ['.l2', 7], ['.l3', -5]].forEach(([c, x]) => gsap.to(`.kh-title ${c}`, { xPercent: x, ease: 'none', scrollTrigger: { trigger: '.kh', start: 'top top', end: 'bottom top', scrub: true } }))
+        ;[['.l1', -4], ['.l2', -4], ['.l3', 6]].forEach(([c, x]) => gsap.to(`.kh-title ${c}`, { xPercent: x, ease: 'none', scrollTrigger: { trigger: '.kh', start: 'top top', end: 'bottom top', scrub: true } }))
       })
       gsap.from('.device.pc', { y: 120, rotateY: -24, rotateX: 12, scale: 0.88, opacity: 0, duration: 1.5, ease: 'expo.out', scrollTrigger: { trigger: '.live', start: 'top 70%' } })
       gsap.from('.device.phone', { y: 200, rotate: 10, opacity: 0, duration: 1.4, ease: 'expo.out', delay: 0.25, scrollTrigger: { trigger: '.live', start: 'top 70%' } })
       gsap.utils.toArray('[data-ch]').forEach((el, k) => ScrollTrigger.create({ trigger: el, start: 'top 55%', end: 'bottom 55%', onToggle: (s) => s.isActive ? setAt(k) : (k === 0 && s.direction < 0 && setAt(-1)) }))
-      ScrollTrigger.create({ start: 80, onToggle: (s) => setTop(!s.isActive) })
       gsap.utils.toArray('.chp').forEach((el) => {
         gsap.from(el.querySelectorAll('.chp-t .ch'), { yPercent: 110, duration: 1, ease: 'expo.out', stagger: 0.05, scrollTrigger: { trigger: el, start: 'top 78%' } })
         gsap.from(el.querySelector('.chp-n'), { yPercent: 40, opacity: 0, duration: 1.2, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 78%' } })
@@ -513,7 +522,7 @@ export default function App({ fromTx }) {
         <h1 className="kh-title" aria-label="구경만 하는 홈페이지 말고, 써 보는 홈페이지.">
           <span className="kl l1" aria-hidden><Chars t="구경만 하는" /><InlineClip name="w_cafe" href="/work/cafe/" cls="wide" /></span>
           <span className="kl l2" aria-hidden><Chars t="홈페이지 말고," /></span>
-          <span className="kl l3" aria-hidden><Chars t="써 보는" cls="red" /><Chars t=" 홈페이지." /><InlineClip name="w_detail" href="/work/detail/" cls="d-only" /></span>
+          <span className="kl l3" aria-hidden><Chars t="써 보는" cls="red" /><Chars t=" 홈페이지." /></span>
         </h1>
         {mob && <div className="kh-mreel"><Reel /></div>}
         <div className="kh-foot">

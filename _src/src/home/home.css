@@ -544,3 +544,32 @@ html.has-cur input, html.has-cur textarea, html.has-cur select { cursor: auto }
   .kh-inl.wide { width: 1.3em }
   .kh-inl.wide:hover { width: 1.3em }
 }
+
+/* 장 표시 줄: 아래 왼쪽 가로 줄이 본문 글자를 가려서, 화면 왼쪽 가장자리 세로 점 줄로 바꾼다. 여백이 넉넉한 넓은 화면에서만. */
+.rail { left: 18px; top: 50%; bottom: auto; flex-direction: column; gap: 2px; padding: 5px; transform: translateY(-50%) }
+.rail.off { transform: translate(-12px, -50%) }
+.rail a { justify-content: center; width: 30px; padding: 8px 0; position: relative }
+.rail a span { position: absolute; left: calc(100% + 10px); top: 50%; transform: translate(-6px, -50%); white-space: nowrap; padding: 5px 10px; border-radius: 999px; background: rgba(var(--deep2-rgb), .86); color: var(--paper); opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s }
+.rail a:hover span { opacity: 1; transform: translate(0, -50%) }
+.rail a.on { background: rgba(var(--acc-rgb), .9) }
+@media (max-width: 1399px) { .rail { display: none } }
+
+/* PC 첫 화면: 제목을 두 줄로 줄이고 설명·버튼을 둘째 줄 오른쪽 빈자리로 올려서, 아래 견본 영상 창이 첫 화면 안에 크게 보이게 한다. */
+@media (min-width: 981px) {
+  .kh { padding-bottom: 36px }
+  .kh-title { font-size: min(8.1vw, 124px) }
+  .kh-title .l1, .kh-title .l2 { display: inline-block; vertical-align: top }
+  .kh-title .l1 { margin-right: .26em }
+  .kh-title .l2 { padding-left: 0 }
+  .kh-inl.wide { display: none }
+}
+@media (min-width: 1280px) {
+  .kh-foot { position: absolute; z-index: 3; right: max(24px, calc((100% - 1360px) / 2)); bottom: 40px; width: min(470px, 35vw); margin: 0; padding: 0; border-top: 0; flex-direction: column; align-items: flex-start; gap: 16px }
+  .kh-foot .lede { font-size: 15px; line-height: 1.6; max-width: none }
+  .kh-foot .cta { display: flex; gap: 10px }
+  .kh-foot .btn { min-height: 50px; padding: 0 22px; font-size: 15px }
+}
+/* 휴대폰 제목 속 작은 영상: 영상 아래쪽 큰 글자가 잘려 보이지 않게 위쪽을 보여 준다. */
+.kh-inl video { object-position: 50% 8% }
+/* 실시간 견본 화면이 마우스 따라 기울 때 휴대폰 틀이 화면 오른쪽 밖으로 나가 가로 스크롤이 생기던 것 막기 */
+.live { overflow-x: clip }
