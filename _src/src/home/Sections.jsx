@@ -127,6 +127,13 @@ export function Contact({ preset }) {
   const [v, setV] = useState({ kind: '', biz: '', budget: '', when: '', name: '', phone: '', shop: '', memo: '', agree: false })
   const [err, setErr] = useState('')
   const [done, setDone] = useState(null)
+  const [copied, setCopied] = useState(false)
+  const copy = (t) => {
+    const ok = () => setCopied(true)
+    if (navigator.clipboard?.writeText) navigator.clipboard.writeText(t).then(ok, () => fallback(t))
+    else fallback(t)
+    function fallback(x) { const a = document.createElement('textarea'); a.value = x; document.body.appendChild(a); a.select(); try { document.execCommand('copy'); ok() } catch {} a.remove() }
+  }
   useEffect(() => { if (preset) setV((x) => ({ ...x, memo: `견적 계산기: ${preset.summary} (임시 ${preset.sum}만원, 약 ${preset.days}일)` })) }, [preset])
   const set = (k, val) => { setV((x) => ({ ...x, [k]: val })); setErr('') }
   const fmt = (t) => { const d = t.replace(/\D/g, '').slice(0, 11); return d.length < 4 ? d : d.length < 8 ? `${d.slice(0, 3)}-${d.slice(3)}` : `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7)}` }
@@ -176,6 +183,8 @@ export function Contact({ preset }) {
             <p>버튼을 누르면 내용이 채워진 메일이 열려요. 보내기만 누르시면 접수됩니다.</p>
             <pre>{done.body}</pre>
             <a className="btn lime full" href={done.href}>메일로 보내기</a>
+            {/* 메일 앱이 없는 PC·휴대폰에서도 보낼 수 있게: 내용을 복사해 아무 메일·문자로 보내면 된다 */}
+            <button type="button" className="btn line full c-copy" onClick={() => copy(`받는 곳: hello@pulsr.kr\n${done.body}`)}>{copied ? '복사했어요. hello@pulsr.kr로 보내 주세요' : '메일 앱이 안 열리면 내용 복사하기'}</button>
             <button className="c-back" onClick={() => setDone(null)}>닫기</button>
           </div>
         </div>

@@ -573,3 +573,4 @@ html.has-cur input, html.has-cur textarea, html.has-cur select { cursor: auto }
 .kh-inl video { object-position: 50% 8% }
 /* 실시간 견본 화면이 마우스 따라 기울 때 휴대폰 틀이 화면 오른쪽 밖으로 나가 가로 스크롤이 생기던 것 막기 */
 .live { overflow-x: clip }
+.c-done .c-copy { margin-top: 8px; min-height: 48px; font-size: 14px; color: var(--ink); border: 1px solid var(--line) }
