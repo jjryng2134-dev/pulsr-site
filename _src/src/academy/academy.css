@@ -20,7 +20,7 @@ p { word-break: keep-all }
 
 .a-demo { background: var(--ink); color: #c9cbd6; font-size: 12px; text-align: center; padding: 7px 16px }
 .a-demo b { color: var(--yel); letter-spacing: .08em }
-.a-top { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 28px; padding: 14px max(24px, calc((100% - 1200px) / 2)); background: rgba(246, 245, 241, .86); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(20, 24, 43, .06) }
+.a-top { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 28px; padding: 14px max(24px, calc((100% - 1200px) / 2)); background: rgb(246, 245, 241); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(20, 24, 43, .06) }
 .a-logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 19px; letter-spacing: -.03em }
 .a-logo span { width: 34px; height: 34px; border-radius: 10px; background: var(--navy); color: var(--yel); display: grid; place-items: center; font-size: 17px }
 .a-top nav { display: flex; gap: 26px; margin-left: auto; font-size: 15px; font-weight: 600; color: var(--mute) }

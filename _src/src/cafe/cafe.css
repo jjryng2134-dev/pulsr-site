@@ -28,7 +28,7 @@ h1, h2, h3 { font-family: var(--serif); font-weight: 700; letter-spacing: -0.02e
 .demo-bar b { color: #fff; letter-spacing: .08em }
 
 /* 헤더 */
-.top { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 28px; padding: 14px max(20px, calc((100% - 1180px) / 2)); background: rgba(239, 233, 222, .86); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(34, 26, 20, .06) }
+.top { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 28px; padding: 14px max(20px, calc((100% - 1180px) / 2)); background: rgb(239, 233, 222); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(34, 26, 20, .06) }
 .brand { display: flex; align-items: baseline; gap: 6px; font-family: var(--serif); font-size: 22px; font-weight: 700 }
 .brand em { font-family: var(--it); font-weight: 400; font-size: 17px; color: var(--oak) }
 .top nav { display: flex; gap: 24px; margin-left: auto; font-size: 14px; color: var(--mute) }

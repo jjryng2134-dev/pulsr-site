@@ -19,7 +19,7 @@ h2 { font-size: clamp(30px, 4vw, 54px) }
 
 .d-demo { background: var(--dark); color: #cdbfae; font-size: 12px; text-align: center; padding: 7px 16px }
 .d-demo b { color: var(--honey2); letter-spacing: .08em }
-.d-top { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 28px; padding: 14px max(24px, calc((100% - 1200px) / 2)); background: rgba(255, 250, 242, .88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line) }
+.d-top { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 28px; padding: 14px max(24px, calc((100% - 1200px) / 2)); background: rgb(255, 250, 242); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line) }
 .d-logo { font-family: var(--serif); font-weight: 700; font-size: 22px; display: flex; align-items: baseline; gap: 6px }
 .d-logo em { font-family: var(--disp); font-size: 15px; color: var(--honey) }
 .d-top nav { display: flex; gap: 26px; margin-left: auto; font-size: 14px; color: var(--sub) }
