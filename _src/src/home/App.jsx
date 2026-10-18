@@ -114,6 +114,13 @@ const CHAPTERS = [
   { at: 20.18, t: '학원 · 레벨 진단', href: '/work/academy/' },
 ]
 
+// 아래로 내려가는 이야기: 보고 → 써 보고 → 값 매기고 → 맡기기
+const STORY = [
+  { id: 'see', n: '01', t: '보고', en: 'See', d: '업종별 견본부터 둘러보세요. 마음에 드는 게 있으면 눌러서 들어가 보시면 돼요.' },
+  { id: 'try', n: '02', t: '써 보고', en: 'Try', d: '보는 것과 써 보는 건 달라요. 손님이 실제로 누르는 화면을 직접 만져 보세요.' },
+  { id: 'price', n: '03', t: '값 매기고', en: 'Price', d: '필요한 기능만 고르면 금액과 기간이 바로 나와요. 다른 곳과도 나란히 놓고 비교해 보세요.' },
+  { id: 'ask', n: '04', t: '맡기기', en: 'Ask', d: '궁금한 걸 먼저 풀고 편하게 상담 신청하세요. 상담만으로는 돈이 들지 않아요.' },
+]
 const Chars = ({ t, cls = '' }) => [...t].map((c, i) => <span key={i} className={`ch ${cls}`}>{c === ' ' ? ' ' : c}</span>)
 
 // 첫 방문 인트로: 로고가 올라오고 빨간 줄이 차면 막이 걷히며 첫 화면이 열린다. 같은 창에서 다시 오면 생략.
@@ -121,6 +128,9 @@ function Intro({ skip, onDone }) {
   const el = useRef(null)
   const [on, setOn] = useState(() => {
     if (skip || reduce) return false
+    // 느린 회선에서 이미 오래 기다린 사람에겐 인트로를 건너뛰고 바로 본문을 보여 준다.
+    const cn = navigator.connection
+    if (performance.now() > 2200 || cn?.saveData || /2g|3g/.test(cn?.effectiveType || '')) return false
     try { return !sessionStorage.getItem('pulsr-intro') } catch { return true }
   })
   useEffect(() => {
@@ -160,14 +170,19 @@ function Reel() {
     const tick = () => { const t = el.currentTime; let k = 0; CHAPTERS.forEach((c, i) => { if (t >= c.at) k = i }); setCh(k) }
     el.addEventListener('timeupdate', tick)
     // 화면 밖에 있을 땐 멈춰서 휴대폰 배터리를 아낀다.
-    const io = new IntersectionObserver(([e]) => { if (reduce) return; e.isIntersecting ? el.play().catch(() => {}) : el.pause() })
-    io.observe(el)
-    return () => { el.removeEventListener('timeupdate', tick); io.disconnect() }
+    // 영상은 페이지가 다 뜬 뒤에 받기 시작한다(느린 망에서 제목 글자가 먼저 뜨게).
+    let io
+    const start = () => {
+      io = new IntersectionObserver(([e]) => { if (reduce) return; e.isIntersecting ? el.play().catch(() => {}) : el.pause() })
+      io.observe(el)
+    }
+    if (document.readyState === 'complete') start(); else window.addEventListener('load', start, { once: true })
+    return () => { el.removeEventListener('timeupdate', tick); window.removeEventListener('load', start); io?.disconnect() }
   }, [])
   const c = CHAPTERS[ch]
   return (
     <div className="kh-reel">
-      <video ref={v} poster="/home/reel_poster.jpg" muted loop playsInline autoPlay={!reduce} controls={reduce} preload="auto" aria-label="견본 5종을 실제로 쓰는 장면">
+      <video ref={v} poster={src === '/home/reel_m' ? '/home/reel_poster_m.jpg' : '/home/reel_poster.jpg'} muted loop playsInline controls={reduce} preload="none" aria-label="견본 5종을 실제로 쓰는 장면">
         <source src={`${src}.mp4`} type="video/mp4" />
         <source src={`${src}.webm`} type="video/webm" />
       </video>
@@ -180,6 +195,49 @@ function Reel() {
   )
 }
 
+
+// 제목 첫 줄 끝에 박힌 작은 카페 견본 영상. 페이지가 다 뜬 뒤에 받는다.
+function InlineClip() {
+  const v = useRef(null)
+  useEffect(() => {
+    if (reduce) return
+    const go = () => v.current?.play().catch(() => {})
+    if (document.readyState === 'complete') go(); else window.addEventListener('load', go, { once: true })
+    return () => window.removeEventListener('load', go)
+  }, [])
+  return (
+    <a className="kh-inl" href="/work/cafe/" tabIndex={-1} data-cursor="써 보기">
+      <video ref={v} muted loop playsInline preload="none" poster="/home/w_cafe_s.jpg"><source src="/home/w_cafe.mp4" type="video/mp4" /><source src="/home/w_cafe.webm" type="video/webm" /></video>
+    </a>
+  )
+}
+
+// 이야기 장 머리: 큰 번호와 한 단어. 내려오면 글자가 올라오고 밑줄이 그어진다.
+function Chapter({ i, dark }) {
+  const c = STORY[i]
+  return (
+    <header className={`chp ${dark ? 'dark' : ''}`} id={c.id}>
+      <div className="wrap chp-in">
+        <span className="chp-n" aria-hidden>{c.n}</span>
+        <div className="chp-main">
+          <p className="chp-en">Chapter {c.n} · {c.en}</p>
+          <h2 className="chp-t" aria-label={c.t}><span aria-hidden><Chars t={c.t} /></span></h2>
+        </div>
+        <p className="chp-d">{c.d}</p>
+      </div>
+      <div className="wrap"><i className="chp-line" aria-hidden /></div>
+    </header>
+  )
+}
+
+// 화면 왼쪽 아래 지금 몇 번째 장인지 보여 주는 줄(PC만).
+function Rail({ at }) {
+  return (
+    <nav className={`rail ${at < 0 ? 'off' : ''}`} aria-label="이야기 순서">
+      {STORY.map((c, k) => <a key={c.id} href={`#${c.id}`} className={k === at ? 'on' : k < at ? 'past' : ''}><b>{c.n}</b><span>{c.t}</span></a>)}
+    </nav>
+  )
+}
 
 // 견본 목록: 큰 글자 줄. PC는 줄에 마우스를 올리면 그 견본 영상이 커서를 따라 뜨고, 휴대폰은 줄마다 영상이 들어 있다.
 function WorkList({ list, all, onOpen }) {
@@ -360,6 +418,8 @@ export default function App({ fromTx }) {
   const { tag, setTag, TAGS, list } = useFilter(WORKS)
   const [hideCta, setHideCta] = useState(false)
   const [ready, setReady] = useState(false)
+  const [at, setAt] = useState(-1)
+  const [top, setTop] = useState(true)
   useMagnet(root)
   useEffect(() => {
     // 견적·상담 칸이 보이는 동안엔 휴대폰 하단 고정 버튼을 숨겨 입력 버튼을 가리지 않게 한다.
@@ -405,6 +465,13 @@ export default function App({ fromTx }) {
       })
       gsap.from('.device.pc', { y: 120, rotateY: -24, rotateX: 12, scale: 0.88, opacity: 0, duration: 1.5, ease: 'expo.out', scrollTrigger: { trigger: '.live', start: 'top 70%' } })
       gsap.from('.device.phone', { y: 200, rotate: 10, opacity: 0, duration: 1.4, ease: 'expo.out', delay: 0.25, scrollTrigger: { trigger: '.live', start: 'top 70%' } })
+      gsap.utils.toArray('[data-ch]').forEach((el, k) => ScrollTrigger.create({ trigger: el, start: 'top 55%', end: 'bottom 55%', onToggle: (s) => s.isActive ? setAt(k) : (k === 0 && s.direction < 0 && setAt(-1)) }))
+      ScrollTrigger.create({ start: 80, onToggle: (s) => setTop(!s.isActive) })
+      gsap.utils.toArray('.chp').forEach((el) => {
+        gsap.from(el.querySelectorAll('.chp-t .ch'), { yPercent: 110, duration: 1, ease: 'expo.out', stagger: 0.05, scrollTrigger: { trigger: el, start: 'top 78%' } })
+        gsap.from(el.querySelector('.chp-n'), { yPercent: 40, opacity: 0, duration: 1.2, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 78%' } })
+        gsap.fromTo(el.querySelector('.chp-line'), { scaleX: 0 }, { scaleX: 1, ease: 'none', scrollTrigger: { trigger: el, start: 'top 80%', end: 'bottom 40%', scrub: true } })
+      })
       gsap.utils.toArray('.rv').forEach((el) => gsap.from(el, { y: 36, opacity: 0, duration: 0.85, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 86%' } }))
       gsap.from('.wl-row', { y: 50, opacity: 0, duration: 0.8, stagger: 0.06, ease: 'power3.out', scrollTrigger: { trigger: '.wl', start: 'top 85%' } })
     }, root)
@@ -426,9 +493,9 @@ export default function App({ fromTx }) {
 
   return (
     <div ref={root}>
-      <header className="nav">
+      <header className={`nav ${top ? 'top' : ''}`}>
         <a className="logo" href="/">PULS<b>R</b></a>
-        <nav><a href="#works">견본</a><a href="#estimate">견적</a><a href="#compare">비교</a><a href="#faq">자주 묻는 것</a></nav>
+        <nav>{STORY.map((c) => <a key={c.id} href={`#${c.id}`}><i>{c.n}</i>{c.t}</a>)}</nav>
         <a className="nav-cta" href="#contact">무료 상담</a>
       </header>
 
@@ -441,7 +508,7 @@ export default function App({ fromTx }) {
           <p className="kh-meta k-fade">견본 5종 · 계약 전에 직접 눌러 보기</p>
         </div>
         <h1 className="kh-title" aria-label="구경만 하는 홈페이지 말고, 써 보는 홈페이지.">
-          <span className="kl l1" aria-hidden><Chars t="구경만 하는" /></span>
+          <span className="kl l1" aria-hidden><Chars t="구경만 하는" /><InlineClip /></span>
           <span className="kl l2" aria-hidden><Chars t="홈페이지 말고," /></span>
           <span className="kl l3" aria-hidden><Chars t="써 보는" cls="red" /><Chars t=" 홈페이지." /></span>
         </h1>
@@ -457,6 +524,26 @@ export default function App({ fromTx }) {
         <Reel />
       </section>
 
+      <div data-ch>
+        <Chapter i={0} />
+      <section className="works" id="works">
+        <div className="wrap">
+          <div className="sec-head rv">
+            <p className="kicker">Works · 견본</p>
+            <h2>구경만 하지 말고 <em>직접 써 보세요</em></h2>
+            <p>업종마다 손님이 실제로 쓰는 기능을 하나씩 넣었어요. 견본 속 가게는 모두 가상 가게이고, 나머지 견본도 차례로 열립니다.</p>
+          </div>
+          <div className="w-filter rv">{TAGS.map((t) => <button key={t} className={tag === t ? 'on' : ''} onClick={() => setTag(t)}>{t}</button>)}</div>
+          <WorkList list={list} all={WORKS} onOpen={setPv} />
+        </div>
+      </section>
+
+      </div>
+
+      <Marquee />
+
+      <div data-ch>
+        <Chapter i={1} dark />
       <section className="live">
         <div className="live-copy">
           <p className="kicker">Live · 지금 돌아가는 화면</p>
@@ -470,7 +557,14 @@ export default function App({ fromTx }) {
         </div>
       </section>
 
-      <Marquee />
+      <Levels works={WORKS} onPreview={setPv} />
+      </div>
+
+      <div data-ch>
+        <Chapter i={2} />
+      <Estimate onSend={(p) => { setPreset(p); const el = document.getElementById('contact'); window.__lenis ? window.__lenis.scrollTo(el, { offset: -72 }) : el.scrollIntoView({ behavior: 'smooth' }) }} />
+      <Compare />
+      </div>
 
       <section className="proof">
         <div className="wrap proof-in">
@@ -480,23 +574,14 @@ export default function App({ fromTx }) {
         </div>
       </section>
 
-      <section className="works" id="works">
-        <div className="wrap">
-          <div className="sec-head rv">
-            <p className="kicker">Works · 견본</p>
-            <h2>구경만 하지 말고 <em>직접 써 보세요</em></h2>
-            <p>업종마다 손님이 실제로 쓰는 기능을 하나씩 넣었어요. 견본 속 가게는 모두 가상 가게이고, 나머지 견본도 차례로 열립니다.</p>
-          </div>
-          <div className="w-filter rv">{TAGS.map((t) => <button key={t} className={tag === t ? 'on' : ''} onClick={() => setTag(t)}>{t}</button>)}</div>
-          <WorkList list={list} all={WORKS} onOpen={setPv} />
-        </div>
-      </section>
 
-      <Levels works={WORKS} onPreview={setPv} />
-      <Estimate onSend={(p) => { setPreset(p); const el = document.getElementById('contact'); window.__lenis ? window.__lenis.scrollTo(el, { offset: -72 }) : el.scrollIntoView({ behavior: 'smooth' }) }} />
-      <Compare />
+      <div data-ch>
+        <Chapter i={3} />
       <Faq />
       <Contact preset={preset} />
+      </div>
+
+      <Rail at={at} />
 
       <footer className="foot">
         <div className="wrap foot-in">
