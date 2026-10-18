@@ -128,6 +128,7 @@ export function Contact({ preset }) {
   const [err, setErr] = useState('')
   const [done, setDone] = useState(null)
   const [copied, setCopied] = useState(false)
+  const [sending, setSending] = useState(false)
   const copy = (t) => {
     const ok = () => setCopied(true)
     if (navigator.clipboard?.writeText) navigator.clipboard.writeText(t).then(ok, () => fallback(t))
@@ -142,8 +143,21 @@ export function Contact({ preset }) {
   const next = () => {
     if (!ok[s]) return setErr(['무엇을 만들지 골라 주세요', '업종을 골라 주세요', '예산과 일정을 하나씩 골라 주세요', '성함과 연락처를 적어 주세요', '개인정보 수집에 동의해 주세요'][s])
     if (s < 4) return setS(s + 1)
+    if (sending) return
     const body = [`만들 것: ${v.kind}`, `업종: ${v.biz}`, `예산: ${v.budget}`, `일정: ${v.when}`, `성함: ${v.name}`, `연락처: ${v.phone}`, `상호: ${v.shop || '-'}`, `메모: ${v.memo || '-'}`].join('\n')
-    setDone({ body, href: `mailto:hello@pulsr.kr?subject=${encodeURIComponent(`[상담 신청] ${v.shop || v.name} · ${v.biz}`)}&body=${encodeURIComponent(body)}` })
+    const subject = `[상담 신청] ${v.shop || v.name} · ${v.biz}`
+    const href = `mailto:hello@pulsr.kr?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+    // 무료 폼 전송(FormSubmit)으로 hello@pulsr.kr에 바로 보낸다. 실패하면 메일 앱·복사로 보내는 창을 띄운다
+    setSending(true)
+    fetch('https://formsubmit.co/ajax/hello@pulsr.kr', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ _subject: subject, _template: 'table', 만들것: v.kind, 업종: v.biz, 예산: v.budget, 일정: v.when, 성함: v.name, 연락처: v.phone, 상호: v.shop || '-', 메모: v.memo || '-' }),
+    })
+      .then((r) => r.json())
+      .then((j) => setDone({ body, href, sent: String(j.success) === 'true' }))
+      .catch(() => setDone({ body, href, sent: false }))
+      .finally(() => setSending(false))
   }
   const Chips = ({ k, list }) => <div className="c-chips">{list.map((x) => <button type="button" key={x} className={v[k] === x ? 'on' : ''} onClick={() => set(k, x)}>{x}</button>)}</div>
   return (
@@ -171,15 +185,26 @@ export function Contact({ preset }) {
           {err && <p className="c-err">{err}</p>}
           <div className="c-nav">
             {s > 0 ? <button type="button" className="c-back" onClick={() => setS(s - 1)}>← 이전</button> : <span />}
-            <button className="btn lime" type="submit">{s < 4 ? '다음' : '상담 신청 보내기'}</button>
+            <button className="btn lime" type="submit" disabled={sending}>{s < 4 ? '다음' : sending ? '보내는 중…' : '상담 신청 보내기'}</button>
           </div>
         </form>
       </div>
-      {done && (
+      {done?.sent && (
         <div className="pv-over center" onClick={() => setDone(null)}>
           <div className="c-done" onClick={(e) => e.stopPropagation()}>
             <span className="c-ok">✓</span>
-            <h3>거의 다 됐어요</h3>
+            <h3>상담 신청이 접수됐어요</h3>
+            <p>남겨 주신 연락처로 저희가 먼저 연락드릴게요.</p>
+            <pre>{done.body}</pre>
+            <button className="btn lime full" onClick={() => setDone(null)}>닫기</button>
+          </div>
+        </div>
+      )}
+      {done && !done.sent && (
+        <div className="pv-over center" onClick={() => setDone(null)}>
+          <div className="c-done" onClick={(e) => e.stopPropagation()}>
+            <span className="c-ok">✓</span>
+            <h3>바로 전송이 안 됐어요</h3>
             <p>버튼을 누르면 내용이 채워진 메일이 열려요. 보내기만 누르시면 접수됩니다.</p>
             <pre>{done.body}</pre>
             <a className="btn lime full" href={done.href}>메일로 보내기</a>
