@@ -316,7 +316,7 @@ function Marquee() {
   }, [])
   const row = BAND.map((t) => <span key={t}>{t}<i aria-hidden>✱</i></span>)
   return (
-    <div className="band" aria-label={BAND.join(', ') + ' 홈페이지'}>
+    <div className="band" role="img" aria-label={BAND.join(', ') + ' 홈페이지'}>
       <div className="band-track" ref={track} aria-hidden>{row}{row}</div>
     </div>
   )
