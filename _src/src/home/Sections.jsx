@@ -147,9 +147,9 @@ export function Contact({ preset }) {
     const body = [`만들 것: ${v.kind}`, `업종: ${v.biz}`, `예산: ${v.budget}`, `일정: ${v.when}`, `성함: ${v.name}`, `연락처: ${v.phone}`, `상호: ${v.shop || '-'}`, `메모: ${v.memo || '-'}`].join('\n')
     const subject = `[상담 신청] ${v.shop || v.name} · ${v.biz}`
     const href = `mailto:hello@pulsr.kr?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
-    // 무료 폼 전송(FormSubmit)으로 hello@pulsr.kr에 바로 보낸다. 실패하면 메일 앱·복사로 보내는 창을 띄운다
+    // 무료 폼 전송(FormSubmit)으로 바로 보낸다(받는 주소 대신 FormSubmit 임의 주소). 실패하면 메일 앱·복사로 보내는 창을 띄운다
     setSending(true)
-    fetch('https://formsubmit.co/ajax/hello@pulsr.kr', {
+    fetch('https://formsubmit.co/ajax/2c2ff11c680b9291810031116e898b40', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({ _subject: subject, _template: 'table', 만들것: v.kind, 업종: v.biz, 예산: v.budget, 일정: v.when, 성함: v.name, 연락처: v.phone, 상호: v.shop || '-', 메모: v.memo || '-' }),
