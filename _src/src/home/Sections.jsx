@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { TENTATIVE, BASES, FEATURES, PHOTO, LEVELS, COMPARE, FAQ } from './data.js'
+import { TENTATIVE, BASES, FEATURES, PHOTO, CARE, LEVELS, COMPARE, FAQ } from './data.js'
 
 const won = (man) => `${man}만원`
 
@@ -67,12 +67,13 @@ export function Estimate({ onSend }) {
   const [base, setBase] = useState('one')
   const [feats, setFeats] = useState(['form'])
   const [photo, setPhoto] = useState(false)
+  const [care, setCare] = useState(false)
   const b = BASES.find((x) => x.id === base)
   const picked = FEATURES.filter((f) => feats.includes(f.id))
   const sum = b.price + picked.reduce((s, f) => s + f.price, 0) + (photo ? PHOTO.price : 0)
   const days = b.days + picked.reduce((s, f) => s + f.days, 0) + (photo ? PHOTO.days : 0)
   const toggle = (id) => setFeats((f) => (f.includes(id) ? f.filter((x) => x !== id) : [...f, id]))
-  const summary = `${b.name}${picked.length ? ' + ' + picked.map((f) => f.name).join(', ') : ''}${photo ? ' + 사진 제작' : ''}`
+  const summary = `${b.name}${picked.length ? ' + ' + picked.map((f) => f.name).join(', ') : ''}${photo ? ' + 사진 제작' : ''}${care ? ` + 월 관리(월 ${CARE.price}만원)` : ''}`
   return (
     <section className="est" id="estimate">
       <div className="wrap est-in">
@@ -94,6 +95,7 @@ export function Estimate({ onSend }) {
             </label>
           ))}</div>
           <label className={`e-photo ${photo ? 'on' : ''}`}><input type="checkbox" checked={photo} onChange={() => setPhoto(!photo)} /><i aria-hidden /><span><b>사진도 만들어 주세요</b><small>쓸 사진이 없으면 실사 느낌으로 만들어 드려요</small></span></label>
+          <label className={`e-photo ${care ? 'on' : ''}`}><input type="checkbox" checked={care} onChange={() => setCare(!care)} /><i aria-hidden /><span><b>다 만든 뒤 관리도 맡길게요 (선택)</b><small>유지비는 0원 그대로, {CARE.sub} 바꿔 드려요</small></span></label>
         </div>
         <aside className="e-out">
           {TENTATIVE && <p className="e-tag">임시 금액 · 가격 확정 전</p>}
@@ -105,6 +107,7 @@ export function Estimate({ onSend }) {
             {picked.map((f) => <li key={f.id}><span>{f.name}</span><span>+{won(f.price)}</span></li>)}
             {photo && <li><span>사진 제작</span><span>+{won(PHOTO.price)}</span></li>}
             <li><span>월 유지비</span><span>0원</span></li>
+            {care && <li><span>월 관리 (선택)</span><span>월 {CARE.price}만원</span></li>}
           </ul>
           <button className="btn lime full" onClick={() => onSend({ summary, sum, days })}>이 구성으로 상담 신청</button>
           <p className="e-note">정확한 금액은 상담 후 확정돼요. 상담 신청만으로는 돈이 들지 않아요.</p>
